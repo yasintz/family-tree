@@ -55,14 +55,23 @@
     transition: all 0.3s;
   }
 
+  & > div {
+    display: flex;
+    .itemAction {
+      margin-right: 8px;
+      &:last-child {
+        margin-right: 0px;
+      }
+    }
+  }
   &.female {
     background-color: #c569cd;
     .itemAction {
       $fill: #6f313c;
-      fill: $fill;
+      color: $fill;
       &:hover {
         background-color: $fill;
-        fill: white;
+        color: white;
       }
     }
   }
@@ -70,10 +79,10 @@
     background-color: #2f33cb;
     .itemAction {
       $fill: #ba9b8e;
-      fill: $fill;
+      color: $fill;
       &:hover {
         background-color: $fill;
-        fill: white;
+        color: white;
       }
     }
   }

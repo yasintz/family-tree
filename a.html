@@ -1,0 +1,75 @@
+<html>
+  <head> </head>
+  <body>
+    <div class="tree" id="tree"></div>
+
+    <script>
+      exports = {};
+      require = () => exports;
+    </script>
+    <script src="./dist/family.js"></script>
+
+    <script src="./dist/dummy.js"></script>
+
+    <script>
+      const genderClass = ['m', 'f'];
+      const render = (person, extraClass = '') =>
+        `<div data-type="person" data-id="${person.id}" class="${
+          genderClass[person.gender]
+        } ${extraClass}">${person.name}</div>`;
+
+      function create(person) {
+        const partner = person.partners.map((p) => render(p, 'pr')).join('');
+        const wrapperClass = person.partner ? 'w d' : 'w';
+
+        const child = person.children.length
+          ? `<ul>${person.children.map(create).join('')}</ul>`
+          : '';
+
+        return `
+              <li>
+                <div class="w">
+                   ${render(person)}
+                   ${partner}
+                </div>
+                ${child}
+              </li>
+            `;
+      }
+
+      function getSize(h) {
+        const domItem = document.createElement('div');
+        document.body.appendChild(domItem);
+
+        domItem.classList.add('tree');
+
+        domItem.style.position = 'absolute';
+        domItem.style.width = '999999px';
+        domItem.style.height = '999999px';
+        domItem.style.opacity = '0';
+        domItem.style.pointerEvents = 'none';
+        domItem.innerHTML = `<div style="width:fit-content"><ul><li><div class="w"><div class="f">Parent</div></div>${h}</li></ul></div>`;
+
+        const div = domItem.children[0];
+        const li = div.children[0].children[0];
+        const width = div.clientWidth;
+        const height = li.clientHeight;
+
+        document.body.removeChild(domItem);
+        domItem.innerHTML = '';
+
+        return { width, height };
+      }
+    </script>
+    <script>
+      const s = data.sukru.serialize();
+      const htm = create(s);
+
+      const { width, height } = getSize(htm);
+      const mainTree = document.getElementById('tree');
+      mainTree.style.width = `${width}px`;
+      mainTree.style.height = `${height}px`;
+      mainTree.innerHTML = `<ul>${htm}</ul>`;
+    </script>
+  </body>
+</html>

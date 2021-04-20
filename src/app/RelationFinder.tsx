@@ -1,50 +1,15 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import style from './app.module.scss';
-import { Person, Relation } from '../types';
+import { Person } from '../types';
+import cx from 'classnames';
+import builder from '../helper/builder';
+import { AppContext } from './ctx';
 
 type RelationFinderProps = {
-  personList: Person[];
-  relation: Relation[];
-
   mainPerson: Person;
   onSelect: (person: Person) => void;
+  preview?: boolean;
 };
-
-function builder(person: Person, personList: Person[], relation: Relation[]) {
-  const getPersonById = (id: string) =>
-    personList.find((i) => i.id === id) as Person;
-  const _getParents = () => {
-    return relation
-      .filter((r) => r.type === 'parent' && r.second === person.id)
-      .map((r) => getPersonById(r.main));
-  };
-
-  const _getChildrenByParent = (parentId: string) => {
-    return relation
-      .filter((r) => r.type === 'parent' && r.main === parentId)
-      .map((i) => getPersonById(i.second));
-  };
-
-  return {
-    parents: _getParents(),
-    children: _getChildrenByParent(person.id),
-    partners: relation
-      .filter(
-        (i) =>
-          i.type === 'partner' &&
-          (i.main === person.id || i.second === person.id)
-      )
-      .map((r) => (r.main === person.id ? r.second : r.main))
-      .map((i) => getPersonById(i)),
-
-    siblings: _getParents()
-      .reduce(
-        (acc, cur) => (acc.push(..._getChildrenByParent(cur.id)), acc),
-        [] as Person[]
-      )
-      .filter((i) => i.id !== person.id),
-  };
-}
 
 const RenderPersonList: React.FC<{
   personList: Person[];
@@ -70,15 +35,14 @@ const RenderPersonList: React.FC<{
 
 const PersonRelation = ({
   person,
-  personList,
-  relation,
   onClick,
+  renderAllPerson,
 }: {
   person: Person;
-  personList: Person[];
-  relation: Relation[];
   onClick: (person: Person) => void;
+  renderAllPerson: boolean;
 }) => {
+  const { person: personList, relation } = useContext(AppContext);
   const builded = useMemo(() => builder(person, personList, relation), [
     person,
     relation,
@@ -87,11 +51,13 @@ const PersonRelation = ({
 
   return (
     <div className={style.listContainer}>
-      <RenderPersonList
-        personList={personList}
-        title="All Persons"
-        onClick={onClick}
-      />
+      {renderAllPerson && (
+        <RenderPersonList
+          personList={personList}
+          title="All Persons"
+          onClick={onClick}
+        />
+      )}
       <RenderPersonList
         personList={builded.children}
         title="Children"
@@ -109,7 +75,7 @@ const PersonRelation = ({
       />
       <RenderPersonList
         personList={builded.partners}
-        title="Sibling"
+        title="Partner"
         onClick={onClick}
       />
     </div>
@@ -117,10 +83,9 @@ const PersonRelation = ({
 };
 
 const RelationFinder: React.FC<RelationFinderProps> = ({
-  personList,
-  relation,
   mainPerson,
   onSelect,
+  preview,
 }) => {
   const [stack, setStack] = useState<Person[]>([]);
   const stackRef = useRef<HTMLDivElement>();
@@ -144,29 +109,35 @@ const RelationFinder: React.FC<RelationFinderProps> = ({
   }, [onSelect, lastPerson]);
 
   return (
-    <div className={style.relationFinder}>
-      <div className={style.stackList} ref={stackRef as any}>
-        {stack.map((p, index) => (
-          <div
-            onClick={() =>
-              setStack((prev) => {
-                const copy = Array.from(prev);
-                copy.splice(index, 1);
-                return copy;
-              })
-            }
-            key={p.id + 'stack'}
-          >
-            {p.name}
-          </div>
-        ))}
-      </div>
+    <div
+      className={cx(
+        style.relationFinder,
+        preview && style.relationFinderPreview
+      )}
+    >
+      {!preview && (
+        <div className={style.stackList} ref={stackRef as any}>
+          {stack.map((p, index) => (
+            <div
+              onClick={() =>
+                setStack((prev) => {
+                  const copy = Array.from(prev);
+                  copy.splice(index, 1);
+                  return copy;
+                })
+              }
+              key={p.id + 'stack'}
+            >
+              {p.name}
+            </div>
+          ))}
+        </div>
+      )}
 
       <PersonRelation
-        onClick={handleClick}
+        onClick={preview ? () => 0 : handleClick}
         person={lastPerson || mainPerson}
-        personList={personList}
-        relation={relation}
+        renderAllPerson={!preview}
       />
     </div>
   );

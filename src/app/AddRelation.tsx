@@ -1,23 +1,20 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
+import cx from 'classnames';
 import style from './app.module.scss';
-import { Person, Relation, RelationType } from '../types';
+import { Person, RelationType } from '../types';
 import { popupHoc } from '../components/Popup';
 import RelationFinder from './RelationFinder';
+import { AppContext } from './ctx';
+import CreatePerson from './CreatePerson';
+import TypeSelector from './TypeSelector';
 
 type AddRelationProps = {
   person?: Person;
   onClose: () => void;
-  relation: Relation[];
-  personList: Person[];
-  createRelation: (type: RelationType, person: Person) => void;
 };
 
-const AddRelation: React.FC<AddRelationProps> = ({
-  person,
-  relation,
-  personList,
-  createRelation,
-}) => {
+const AddRelation: React.FC<AddRelationProps> = ({ person }) => {
+  const { createRelation, createPerson } = useContext(AppContext);
   const [selectedRelation, setSelectedRelation] = useState<Person>();
   const [relationType, setRelationType] = useState<RelationType>('partner');
   if (!person) {
@@ -25,41 +22,40 @@ const AddRelation: React.FC<AddRelationProps> = ({
   }
   return (
     <div className={style.addRelationContent}>
-      <div>
-        <div>Person: {person.name}</div>
-        <br />
-        <div>Relation: {selectedRelation?.name}</div>
-        <br />
-        <label>
-          Type:&nbsp;
-          <select
-            onChange={(e) => setRelationType(e.target.value as RelationType)}
+      <div className={style.addRelationContentTop}>
+        <div>
+          <div>Person: {person.name}</div>
+          <br />
+          <div>Relation: {selectedRelation?.name}</div>
+          <br />
+          <TypeSelector val={relationType} onChange={setRelationType} />
+          <br />
+          <br />
+          <button
+            disabled={!selectedRelation}
+            onClick={() =>
+              selectedRelation &&
+              createRelation(relationType, person.id, selectedRelation.id)
+            }
           >
-            <option value="partner">Partner</option>
-            <option value="parent">Parent</option>
-            <option value="children">Children</option>
-          </select>
-        </label>
-        <br />
-        <br />
-        <button
-          disabled={!selectedRelation}
-          onClick={() =>
-            selectedRelation && createRelation(relationType, selectedRelation)
-          }
-        >
-          Create Relation
-        </button>
-        <br />
-        {person.name} {selectedRelation?.name}'nin {relationType}'i
+            Create Relation
+          </button>
+          <br />
+          <br />
+          {person.name} {selectedRelation?.name || '$'} 'nin {relationType}'i
+        </div>
+        <div>
+          <CreatePerson
+            onSubmit={(name, gender) =>
+              setSelectedRelation(createPerson(name, gender))
+            }
+          />
+        </div>
       </div>
 
-      <RelationFinder
-        onSelect={setSelectedRelation}
-        personList={personList}
-        relation={relation}
-        mainPerson={person}
-      />
+      <RelationFinder onSelect={() => 0} mainPerson={person} preview />
+
+      <RelationFinder onSelect={setSelectedRelation} mainPerson={person} />
     </div>
   );
 };

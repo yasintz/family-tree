@@ -1,23 +1,28 @@
 import React, { useState } from 'react';
 import style from './app.module.scss';
-import { popupHoc } from '../components/Popup';
-import { Gender, Person } from '../types';
+import { Gender } from '../types';
 
 type CreatePersonProps = {
-  onPersonCreate: (name: string, gender: Gender) => void;
-  onClose: () => void;
-  open: boolean;
+  onSubmit: (name: string, gender: Gender) => void;
+  name?: string;
+  gender?: Gender;
 };
 
-const CreatePerson: React.FC<CreatePersonProps> = ({ onPersonCreate }) => {
-  const [name, setName] = useState('');
-  const [gender, setGender] = useState<Gender>(0);
+const CreatePerson: React.FC<CreatePersonProps> = ({
+  onSubmit,
+  name: initialName = '',
+  gender: initialGender = 0,
+}) => {
+  const [name, setName] = useState(initialName);
+  const [gender, setGender] = useState<Gender>(initialGender);
   return (
     <div className={style.createPersonContent}>
       <label>
         Name:
         <input value={name} onChange={(e) => setName(e.target.value)} />
       </label>
+      <br />
+      <br />
       <div
         onChange={(e) => setGender((e.target as any).value === 'Male' ? 0 : 1)}
       >
@@ -40,14 +45,12 @@ const CreatePerson: React.FC<CreatePersonProps> = ({ onPersonCreate }) => {
           Female
         </label>
       </div>
-      <button disabled={!name} onClick={() => onPersonCreate(name, gender)}>
+      <br />
+      <button disabled={!name} onClick={() => onSubmit(name, gender)}>
         Create
       </button>
     </div>
   );
 };
 
-export default popupHoc(CreatePerson, (prop) => ({
-  open: prop.open,
-  onClose: prop.onClose,
-}));
+export default CreatePerson;

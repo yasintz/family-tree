@@ -1,5 +1,5 @@
 import React from 'react';
-import { createPortal } from 'react-dom';
+import Portal from '../Portal';
 import style from './Popup.module.scss';
 
 type PopupProps = {
@@ -7,19 +7,17 @@ type PopupProps = {
   onClose: () => void;
 };
 
-const wrapper = document.createElement('div');
-document.body.appendChild(wrapper);
-
 const Popup: React.FC<PopupProps> = ({ children, open, onClose }) => {
   if (!open) {
     return null;
   }
-  return createPortal(
-    <div className={style.container}>
-      <div className={style.overlay} onClick={onClose} />
-      <div className={style.content}>{children}</div>
-    </div>,
-    wrapper
+  return (
+    <Portal>
+      <div className={style.container}>
+        <div className={style.overlay} onClick={onClose} />
+        <div className={style.content}>{children}</div>
+      </div>
+    </Portal>
   );
 };
 

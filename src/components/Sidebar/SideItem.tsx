@@ -7,6 +7,7 @@ import Icon from '../Icon';
 type SideItemProps = {
   onClick: () => void;
   onRelationClick: () => void;
+  onEdit: () => void;
 } & Person;
 
 const SideItem: React.FC<SideItemProps> = ({
@@ -14,6 +15,7 @@ const SideItem: React.FC<SideItemProps> = ({
   name,
   onClick,
   onRelationClick,
+  onEdit,
 }) => {
   return (
     <div
@@ -24,12 +26,20 @@ const SideItem: React.FC<SideItemProps> = ({
       })}
     >
       <span>{name}</span>
-      <Icon
-        name="nodes"
-        size={24}
-        className={style.itemAction}
-        onClick={onRelationClick}
-      />
+      <div>
+        <Icon
+          name="Edit"
+          size={24}
+          className={style.itemAction}
+          onClick={onEdit}
+        />
+        <Icon
+          name="Share2"
+          size={24}
+          className={style.itemAction}
+          onClick={onRelationClick}
+        />
+      </div>
     </div>
   );
 };

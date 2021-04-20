@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Gender, Relation, RelationType, Store } from '../types';
+import { Gender, Person, Relation, RelationType, Store } from '../types';
 const uid = () => Math.random().toString(36).substr(2);
 
 const empty = {
@@ -17,37 +17,70 @@ function useData() {
   const [person, setPerson] = useState(initialState.person);
   const [relation, setRelation] = useState(initialState.relation);
 
-  const createPerson = (name: string, gender: Gender) =>
-    setPerson((prev) => [
-      {
-        name,
-        gender,
-        id: uid(),
-      },
-      ...prev,
-    ]);
+  const createPerson = (name: string, gender: Gender) => {
+    const newPerson = {
+      name,
+      gender,
+      id: uid(),
+    };
+
+    setPerson((prev) => [newPerson, ...prev]);
+
+    return newPerson;
+  };
+
+  const updatePerson = (id: string, newPerson: Partial<Person>) =>
+    setPerson((prev) => {
+      const prs = prev.findIndex((p) => p.id === id);
+
+      if (prs === -1) {
+        return prev;
+      }
+
+      const prevPerson = prev[prs];
+      const newItem = {
+        ...prevPerson,
+        ...newPerson,
+        id,
+      };
+
+      const arrayCopy = Array.from(prev);
+      arrayCopy[prs] = newItem;
+
+      return arrayCopy;
+    });
 
   const createRelation = (type: RelationType, main: string, second: string) => {
-    const id = uid();
-    const d = {
+    if (main === second) {
+      return;
+    }
+
+    const d: Relation = {
       type: type as any,
       main,
-      id,
       second,
+      id: '',
     };
 
     const mapp: Record<RelationType, Relation> = {
       children: {
         type: 'parent',
         main: second,
-        id,
+        id: '',
         second: main,
       },
       parent: d,
       partner: d,
     };
 
-    setRelation((prev) => [mapp[type], ...prev]);
+    const newRelation = mapp[type];
+    newRelation.id = `${newRelation.type}${newRelation.main}${newRelation.second}`;
+
+    setRelation((prev) =>
+      prev.findIndex((el) => el.id === newRelation.id) > -1
+        ? prev
+        : [...prev, newRelation]
+    );
   };
 
   useEffect(() => {
@@ -59,6 +92,7 @@ function useData() {
     relation,
     createPerson,
     createRelation,
+    updatePerson,
   };
 }
 

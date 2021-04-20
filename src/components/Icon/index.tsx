@@ -1,39 +1,14 @@
 import React from 'react';
+import * as FIcon from 'react-feather';
+import { IconProps } from 'react-feather';
 
-//--------------------
-import nodes from './nodes';
+type IconComponentProps = {
+  name: keyof typeof FIcon;
+} & IconProps;
 
-//--------------------
-
-const icons = {
-  nodes,
-} as const;
-
-type IconProps = {
-  name: keyof typeof icons;
-  onClick?: () => void;
-  className?: string;
-  size?: number;
-  color?: string;
-};
-
-const Icon: React.FC<IconProps> = ({
-  name,
-  className,
-  onClick,
-  size = 16,
-  color,
-}) => {
-  const _Icon = icons[name];
-  return (
-    <_Icon
-      onClick={onClick}
-      className={className}
-      width={size}
-      height={size}
-      fill={color}
-    />
-  );
+const Icon: React.FC<IconComponentProps> = ({ name, size = 16, ...props }) => {
+  const _Icon = FIcon[name];
+  return <_Icon size={size} {...props} />;
 };
 
 export default Icon;
