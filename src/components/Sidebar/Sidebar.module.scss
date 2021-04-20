@@ -1,0 +1,80 @@
+.container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0 16px;
+  height: 100%;
+}
+.listContainer {
+  overflow-y: auto;
+  height: calc(100% - 32px);
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.createPerson {
+  height: 32px;
+  margin: 16px 0 8px 0;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  background-color: #067bf9;
+  color: white;
+  font-weight: bold;
+
+  &:active {
+    background-color: #0059b8;
+  }
+}
+
+.item {
+  padding: 8px 12px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  cursor: pointer;
+
+  span {
+    font-size: 24px;
+    color: #d6ba8d;
+  }
+
+  .itemAction {
+    width: 24px;
+    height: 24px;
+    padding: 4px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  &.female {
+    background-color: #c569cd;
+    .itemAction {
+      $fill: #6f313c;
+      fill: $fill;
+      &:hover {
+        background-color: $fill;
+        fill: white;
+      }
+    }
+  }
+  &.male {
+    background-color: #2f33cb;
+    .itemAction {
+      $fill: #ba9b8e;
+      fill: $fill;
+      &:hover {
+        background-color: $fill;
+        fill: white;
+      }
+    }
+  }
+}
