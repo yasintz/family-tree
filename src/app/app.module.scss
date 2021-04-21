@@ -5,9 +5,10 @@
 }
 
 .sidebar {
-  flex: 1;
-  border-right: 1px solid #ddd;
+  width: 250px;
+  min-width: 250px;
   max-width: 250px;
+  border-right: 1px solid #ddd;
   box-sizing: border-box;
   &Toggle {
     position: absolute;
@@ -17,107 +18,13 @@
 }
 
 .treeContainer {
-  flex: 5;
+  width: calc(100vw - 250px);
   overflow: scroll;
   justify-content: center;
   align-items: center;
   display: flex;
 }
 
-.addRelationContent {
-  padding: 24px;
-  &Top {
-    display: flex;
-    & > div {
-      flex: 1;
-      &:first-child {
-        border-right: 1px solid #ddd;
-      }
-    }
-  }
-}
-
 .createPersonContent {
   padding: 16px;
-}
-
-.relationFinder {
-  background-color: #e6d5aa;
-  border-radius: 4px;
-  width: 600px;
-  height: 300px;
-  margin-top: 8px;
-  position: relative;
-  overflow: hidden;
-
-  &Preview {
-    height: 250px;
-    padding-top: 8px;
-    .listContainer {
-      height: 100% !important;
-    }
-  }
-
-  .stackList {
-    display: flex;
-    height: 40px;
-    padding: 4px 8px;
-    align-items: center;
-    overflow-x: auto;
-    width: 100%;
-    &::-webkit-scrollbar {
-      display: none;
-    }
-
-    & > div {
-      padding: 4px 8px;
-      height: fit-content;
-      text-align: center;
-      border-radius: 4px;
-      background-color: #aebea1;
-      margin-right: 4px;
-      cursor: pointer;
-      &:last-child {
-        margin-right: 0;
-      }
-    }
-    box-sizing: border-box;
-    border-bottom: 1px solid #51624f;
-  }
-
-  .listContainer {
-    display: flex;
-    height: calc(100% - 48px);
-  }
-
-  .personList {
-    height: 100%;
-    padding: 0 16px;
-    width: 150px;
-    box-sizing: border-box;
-    border-right: 1px solid #51624f;
-    & > h3 {
-      margin: 4px 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    & > div {
-      overflow-y: auto;
-      height: calc(100% - 30px);
-      & > div {
-        padding: 6px 0;
-        margin-bottom: 6px;
-        background-color: #bbb6a5;
-        border-radius: 4px;
-        color: #2a2f33;
-        cursor: pointer;
-        text-align: center;
-      }
-
-      &::-webkit-scrollbar {
-        display: none;
-      }
-    }
-  }
 }

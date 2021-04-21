@@ -3,7 +3,8 @@ import Popup from '../components/Popup';
 import Sidebar from '../components/Sidebar';
 import Tree from '../components/Tree';
 import { Person } from '../types';
-import AddRelation from './AddRelation';
+import AddRelation from './AddRelation/index';
+import RelationFinder from './AddRelation/RelationFinder';
 import style from './app.module.scss';
 import CreatePerson from './CreatePerson';
 import { AppContext } from './ctx';
@@ -28,7 +29,7 @@ function usePersist<S>(
 }
 
 const App: React.FC<AppProps> = () => {
-  const [showSidebar, setShowSideBar] = usePersist('showSidebar', false);
+  const [showSidebar, setShowSideBar] = usePersist('showSidebar', true);
   const [personForRelation, setPersonForRelation] = useState<Person>();
   const [personForUpdate, setPersonForUpdate] = useState<Person>();
   const [showCreatePersonPopup, setShowCreatePersonPopup] = useState(false);
@@ -40,6 +41,10 @@ const App: React.FC<AppProps> = () => {
     createRelation,
     updatePerson,
   } = useData();
+  const [personSelector, setPersonSelector] = useState<{
+    cb: (v: Person) => void;
+    person?: Person;
+  }>();
 
   return (
     <AppContext.Provider
@@ -50,15 +55,18 @@ const App: React.FC<AppProps> = () => {
         createRelation,
         showRelationModal: setPersonForRelation,
         updatePerson,
+        showCreatePersonModal: () => setShowCreatePersonPopup(true),
+        showPersonSelector: setPersonSelector,
+        setPersonForTree,
       }}
     >
       <div className={style.container}>
-        <button
+        {/* <button
           onClick={() => setShowSideBar((prev) => !prev)}
           className={style.sidebarToggle}
         >
           {showSidebar ? 'Hide' : 'Show'} Sidebar
-        </button>
+        </button> */}
 
         {showSidebar && (
           <div className={style.sidebar}>
@@ -68,6 +76,7 @@ const App: React.FC<AppProps> = () => {
               onOpen={setPersonForTree}
               onCreatePersonClick={() => setShowCreatePersonPopup(true)}
               onEdit={setPersonForUpdate}
+              showDetail={(p) => setPersonSelector({ cb: () => 0, person: p })}
             />
           </div>
         )}
@@ -104,6 +113,15 @@ const App: React.FC<AppProps> = () => {
             gender={personForUpdate.gender}
           />
         )}
+      </Popup>
+      <Popup
+        open={!!personSelector}
+        onClose={() => setPersonSelector(undefined)}
+      >
+        <RelationFinder
+          mainPerson={personSelector?.person}
+          onSelect={personSelector?.cb || (() => 0)}
+        />
       </Popup>
     </AppContext.Provider>
   );

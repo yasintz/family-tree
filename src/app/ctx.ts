@@ -4,6 +4,12 @@ import useData from './data';
 
 type ContextType = ReturnType<typeof useData> & {
   showRelationModal: (person: Person) => void;
+  showCreatePersonModal: () => void;
+  setPersonForTree: (person: Person) => void;
+  showPersonSelector: (v: {
+    cb: (person: Person) => void;
+    person?: Person;
+  }) => void;
 };
 
 export const AppContext = React.createContext<ContextType>({
@@ -12,5 +18,8 @@ export const AppContext = React.createContext<ContextType>({
   person: [],
   relation: [],
   showRelationModal: () => 0,
+  showCreatePersonModal: () => 0,
   updatePerson: () => 0,
+  showPersonSelector: () => 0,
+  setPersonForTree: () => 0,
 });

@@ -8,6 +8,7 @@ type SideItemProps = {
   onClick: () => void;
   onRelationClick: () => void;
   onEdit: () => void;
+  onShowDetail: () => void;
 } & Person;
 
 const SideItem: React.FC<SideItemProps> = ({
@@ -16,6 +17,7 @@ const SideItem: React.FC<SideItemProps> = ({
   onClick,
   onRelationClick,
   onEdit,
+  onShowDetail,
 }) => {
   return (
     <div
@@ -28,16 +30,22 @@ const SideItem: React.FC<SideItemProps> = ({
       <span>{name}</span>
       <div>
         <Icon
-          name="Edit"
-          size={24}
+          name="HardDrive"
+          size={20}
           className={style.itemAction}
-          onClick={onEdit}
+          onClick={(e) => (e.stopPropagation(), onShowDetail())}
+        />
+        <Icon
+          name="Edit"
+          size={20}
+          className={style.itemAction}
+          onClick={(e) => (e.stopPropagation(), onEdit())}
         />
         <Icon
           name="Share2"
-          size={24}
+          size={20}
           className={style.itemAction}
-          onClick={onRelationClick}
+          onClick={(e) => (e.stopPropagation(), onRelationClick())}
         />
       </div>
     </div>

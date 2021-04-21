@@ -1,27 +1,38 @@
 import { useEffect, useState } from 'react';
 import { Gender, Person, Relation, RelationType, Store } from '../types';
+import throttle from 'lodash.throttle';
 const uid = () => Math.random().toString(36).substr(2);
 
-const empty = {
-  person: [],
-  relation: [],
+const db = {
+  get: () =>
+    fetch('https://api.npoint.io/ae8995c6924d92c556f8').then(
+      (i) => i.json() as Promise<Store>
+    ),
+  set: throttle(
+    (store: Store) =>
+      fetch('https://api.npoint.io/ae8995c6924d92c556f8', {
+        method: 'post',
+        headers: {
+          Accept: 'application/json, text/plain, */*',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(store),
+      }).then((res) => res.json()),
+    1000
+  ),
 };
 
-const key = '__ft__';
-const persist = JSON.parse(localStorage.getItem(key) || JSON.stringify(empty));
-
-localStorage.setItem(key, JSON.stringify(persist));
-const initialState: Store = persist;
+const getPromise = db.get();
 
 function useData() {
-  const [person, setPerson] = useState(initialState.person);
-  const [relation, setRelation] = useState(initialState.relation);
+  const [person, setPerson] = useState<Person[]>([]);
+  const [relation, setRelation] = useState<Relation[]>([]);
 
   const createPerson = (name: string, gender: Gender) => {
     const newPerson = {
       name,
       gender,
-      id: uid(),
+      id: `${name.split(' ').join('')}_${gender}_${uid()}`,
     };
 
     setPerson((prev) => [newPerson, ...prev]);
@@ -49,12 +60,9 @@ function useData() {
 
       return arrayCopy;
     });
+  type RelationParam = { type: RelationType; main: string; second: string };
 
-  const createRelation = (type: RelationType, main: string, second: string) => {
-    if (main === second) {
-      return;
-    }
-
+  const handleRelation = ({ main, second, type }: RelationParam) => {
     const d: Relation = {
       type: type as any,
       main,
@@ -74,17 +82,33 @@ function useData() {
     };
 
     const newRelation = mapp[type];
-    newRelation.id = `${newRelation.type}${newRelation.main}${newRelation.second}`;
+    newRelation.id = `${newRelation.type}-${newRelation.main}-${newRelation.second}`;
+    return newRelation;
+  };
 
-    setRelation((prev) =>
-      prev.findIndex((el) => el.id === newRelation.id) > -1
-        ? prev
-        : [...prev, newRelation]
-    );
+  const createRelation = (...args: Array<RelationParam>) => {
+    setRelation((prev) => [
+      ...prev,
+      ...args
+        .filter((i) => i.main !== i.second)
+        .map(handleRelation)
+        .filter((rel) => prev.findIndex((a) => a.id === rel.id) === -1),
+    ]);
   };
 
   useEffect(() => {
-    localStorage.setItem(key, JSON.stringify({ person, relation }));
+    getPromise.then((store) => {
+      setPerson(store.person);
+      setRelation(store.relation);
+    });
+  }, []);
+
+  useEffect(() => {
+    const store = {
+      person,
+      relation,
+    };
+    getPromise.then(() => db.set(store));
   }, [person, relation]);
 
   return {

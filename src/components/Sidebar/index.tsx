@@ -9,6 +9,7 @@ type SidebarProps = {
   onOpen: (person: Person) => void;
   onEdit: (person: Person) => void;
   onCreatePersonClick: () => void;
+  showDetail: (person: Person) => void;
 };
 
 const Sidebar: React.FC<SidebarProps> = ({
@@ -17,6 +18,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   onRelationClick,
   onCreatePersonClick,
   onEdit,
+  showDetail,
 }) => {
   return (
     <div className={style.container}>
@@ -31,6 +33,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             onEdit={() => onEdit(p)}
             onRelationClick={() => onRelationClick(p)}
             key={p.id}
+            onShowDetail={() => showDetail(p)}
           />
         ))}
       </div>
