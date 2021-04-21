@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { hh } from '../helper/transformForYFiles';
 import Popup from '../components/Popup';
 import Sidebar from '../components/Sidebar';
 import Tree from '../components/Tree';
@@ -48,6 +49,7 @@ const App: React.FC<AppProps> = () => {
     person?: Person;
   }>();
 
+  hh({ person, relation });
   return (
     <AppContext.Provider
       value={{
