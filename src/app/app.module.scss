@@ -18,6 +18,13 @@
 .treeContainer {
   width: calc(100vw - 250px);
   overflow: scroll;
+  .relationDetail {
+    padding: 24px;
+    height: calc(100% - 48px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 .createPersonContent {

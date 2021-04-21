@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
-import style from './RelationFinder.module.scss';
+import style from './RelationDetail.module.scss';
 import { Person } from '../../types';
 import cx from 'classnames';
 import builder from '../../helper/builder';
@@ -8,6 +8,7 @@ import { AppContext } from '../ctx';
 type RelationFinderProps = {
   mainPerson?: Person;
   onSelect?: (person: Person) => void;
+  renderAllPerson: boolean;
 };
 
 const RenderPersonList: React.FC<{
@@ -104,6 +105,7 @@ const PersonRelation = ({
 const RelationFinder: React.FC<RelationFinderProps> = ({
   mainPerson,
   onSelect,
+  renderAllPerson,
 }) => {
   const [stack, setStack] = useState<Person[]>([]);
   const stackRef = useRef<HTMLDivElement>();
@@ -129,25 +131,29 @@ const RelationFinder: React.FC<RelationFinderProps> = ({
   return (
     <div className={cx(style.relationFinder)}>
       <div className={style.stackList} ref={stackRef as any}>
+        {mainPerson && <span>{mainPerson.name}</span>}
+
         {stack.map((p, index) => (
-          <div
-            onDoubleClick={() =>
-              setStack((prev) => {
-                const copy = Array.from(prev);
-                copy.splice(index, 1);
-                return copy;
-              })
-            }
-            onClick={onSelect ? () => handleClick(p) : undefined}
-            key={p.id + 'stack'}
-          >
+          <div onClick={() => handleClick(p)} key={p.id + 'stack'}>
             {p.name}
+            <span
+              onClick={(e) => {
+                e.stopPropagation();
+                setStack((prev) => {
+                  const copy = Array.from(prev);
+                  copy.splice(index, 1);
+                  return copy;
+                });
+              }}
+            >
+              x
+            </span>
           </div>
         ))}
       </div>
 
       <PersonRelation
-        renderAllPerson={!!onSelect}
+        renderAllPerson={renderAllPerson}
         onClick={handleClick}
         person={lastPerson || mainPerson}
       />
