@@ -62,7 +62,7 @@ const TreeRecursive: React.FC<TreeProps> = ({
           />
         ))}
       </div>
-      {buildedPerson.children.length ? (
+      {buildedPerson.children.length && depth > 0 ? (
         <ul>
           {buildedPerson.children.map((child) => (
             <TreeRecursive
@@ -71,7 +71,7 @@ const TreeRecursive: React.FC<TreeProps> = ({
               relation={relation}
               onClick={onClick}
               key={`${person.id}Child${child.id}`}
-              depth={depth + 1}
+              depth={depth - 1}
             />
           ))}
         </ul>
@@ -87,7 +87,7 @@ const Comp = ({
   person: Person;
   onClick: (person: Person) => void;
 }) => {
-  const { person: personList, relation } = useContext(AppContext);
+  const { person: personList, relation, treeDepth } = useContext(AppContext);
 
   // const builded = useMemo(() => builder(person, personList, relation), [
   //   person,
@@ -109,7 +109,7 @@ const Comp = ({
         relation={relation}
         person={person}
         onClick={onClick}
-        depth={0}
+        depth={treeDepth}
       />
     </ul>
   );
@@ -146,7 +146,7 @@ const Comp = ({
 
     document.body.removeChild(domItem);
     // eslint-disable-next-line
-  }, [person, personList, relation]);
+  }, [person, personList, relation, treeDepth]);
 
   return (
     <div

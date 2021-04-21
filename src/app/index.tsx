@@ -19,6 +19,7 @@ const App: React.FC<AppProps> = () => {
   const [personForTree, setPersonForTree] = useState<Person>();
   const [personForAction, setPersonForAction] = useState<Person>();
   const [personForDetail, setPersonForDetail] = useState<Person>();
+  const [treeDepth, setTreeDepth] = useState<number>(3);
   const {
     relation,
     person,
@@ -68,11 +69,19 @@ const App: React.FC<AppProps> = () => {
         showCreatePersonModal: () => setShowCreatePersonPopup(true),
         showPersonSelector: setPersonSelector,
         setPersonForTree,
-        treeDepth: 3,
+        treeDepth,
       }}
     >
       <div className={style.container}>
         <div className={style.sidebar}>
+          <label>
+            Depth:
+            <input
+              type="number"
+              value={treeDepth.toString()}
+              onChange={(e) => setTreeDepth(parseInt(e.target.value))}
+            />
+          </label>
           <Sidebar
             person={person}
             onClick={(person) => {
