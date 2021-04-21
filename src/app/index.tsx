@@ -25,13 +25,13 @@ function usePersist<S>(
 
   useEffect(() => {
     localStorage.setItem(key, JSON.stringify(state));
-  }, [state]);
+  }, [state, key]);
 
   return [state, setState];
 }
 
 const App: React.FC<AppProps> = () => {
-  const [showSidebar, setShowSideBar] = usePersist('showSidebar', true);
+  const [showSidebar] = usePersist('showSidebar', true);
   const [personForRelation, setPersonForRelation] = useState<Person>();
   const [personForUpdate, setPersonForUpdate] = useState<Person>();
   const [showCreatePersonPopup, setShowCreatePersonPopup] = useState(false);
@@ -127,9 +127,10 @@ const App: React.FC<AppProps> = () => {
           onClose={() => setShowCreatePersonPopup(false)}
         >
           <CreatePerson
-            onSubmit={(name, gender) => (
-              createPerson(name, gender), setShowCreatePersonPopup(false)
-            )}
+            onSubmit={(name, gender) => {
+              createPerson(name, gender);
+              setShowCreatePersonPopup(false);
+            }}
           />
         </Popup>
       </div>
@@ -139,10 +140,10 @@ const App: React.FC<AppProps> = () => {
       >
         {personForUpdate && (
           <CreatePerson
-            onSubmit={(name, gender) => (
-              updatePerson(personForUpdate.id, { name, gender }),
+            onSubmit={(name, gender) => {
+              updatePerson(personForUpdate.id, { name, gender });
               setPersonForUpdate(undefined)
-            )}
+            }}
             name={personForUpdate.name}
             gender={personForUpdate.gender}
           />

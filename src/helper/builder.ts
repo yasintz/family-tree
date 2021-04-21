@@ -29,12 +29,14 @@ function builder(person: Person, personList: Person[], relation: Relation[]) {
 
     siblings: _getParents()
       .reduce(
+        // eslint-disable-next-line
         (acc, cur) => (acc.push(..._getChildrenByParent(cur.id)), acc),
         [] as Person[]
       )
       .filter((i) => i.id !== person.id)
       .reduce(
         (acc, cur) => (
+          // eslint-disable-next-line
           acc.findIndex((p) => p.id === cur.id) === -1 && acc.push(cur), acc
         ),
         [] as Person[]

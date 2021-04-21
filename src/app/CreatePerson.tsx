@@ -40,7 +40,7 @@ const CreatePerson: React.FC<CreatePersonProps> = ({
             value="Female"
             type="radio"
             name="gender"
-            defaultChecked={gender == 1}
+            defaultChecked={gender === 1}
           />
           Female
         </label>

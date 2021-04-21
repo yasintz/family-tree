@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import style from './AddRelation.module.scss';
 import { Person, RelationType } from '../../types';
 import TypeSelector from '../TypeSelector';
@@ -127,9 +127,10 @@ const PersonRenderer: React.FC<PersonRendererProps> = ({
           Detail
         </button>
         <button
-          onClick={() => (
-            onGenerate(lines), setLine([{ type: 'parent', id: '1' }])
-          )}
+          onClick={() => {
+            onGenerate(lines);
+            setLine([{ type: 'parent', id: '1' }]);
+          }}
         >
           Generate
         </button>
@@ -153,9 +154,6 @@ const PersonRenderer: React.FC<PersonRendererProps> = ({
 
 const AddRelation: React.FC<AddRelationProps> = ({ person }) => {
   const { createRelation } = useContext(AppContext);
-  const [personSelectorCb, setPersonSelectorCb] = useState<
-    (v: Person) => void
-  >();
 
   const handleGenerate = (lines: LineItem[]) => {
     if (person) {

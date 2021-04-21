@@ -80,7 +80,7 @@ const TreeRecursive: React.FC<TreeProps> = ({
   );
 };
 
-export default ({
+const Comp = ({
   person,
   onClick,
 }: {
@@ -145,6 +145,7 @@ export default ({
     setSize({ width, height });
 
     document.body.removeChild(domItem);
+    // eslint-disable-next-line
   }, [person, personList, relation]);
 
   return (
@@ -159,3 +160,5 @@ export default ({
     </div>
   );
 };
+
+export default Comp;

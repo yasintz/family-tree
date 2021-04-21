@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Person } from '../../types';
 import style from './Sidebar.module.scss';
 import cx from 'classnames';
-import Icon from '../Icon';
 
 type SideItemProps = {
   onClick: () => void;
