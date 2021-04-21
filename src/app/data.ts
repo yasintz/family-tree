@@ -24,6 +24,7 @@ const db = {
 
 const getPromise = db.get();
 
+let isFetched = false;
 function useData() {
   const [person, setPerson] = useState<Person[]>([]);
   const [relation, setRelation] = useState<Relation[]>([]);
@@ -100,15 +101,21 @@ function useData() {
     getPromise.then((store) => {
       setPerson(store.person);
       setRelation(store.relation);
+      setTimeout(() => {
+        isFetched = true;
+      }, 1000);
     });
   }, []);
 
   useEffect(() => {
+    if (!isFetched) {
+      return;
+    }
     const store = {
       person,
       relation,
     };
-    getPromise.then(() => db.set(store));
+    db.set(store);
   }, [person, relation]);
 
   return {
