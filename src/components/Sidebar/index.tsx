@@ -1,41 +1,37 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Person } from '../../types';
 import style from './Sidebar.module.scss';
 import SideItem from './SideItem';
 
 type SidebarProps = {
   person: Person[];
-  onRelationClick: (person: Person) => void;
-  onOpen: (person: Person) => void;
-  onEdit: (person: Person) => void;
+  onClick: (person: Person) => void;
   onCreatePersonClick: () => void;
-  showDetail: (person: Person) => void;
 };
 
 const Sidebar: React.FC<SidebarProps> = ({
   person,
-  onOpen,
-  onRelationClick,
+  onClick,
   onCreatePersonClick,
-  onEdit,
-  showDetail,
 }) => {
+  const [search, setSearch] = useState('');
   return (
     <div className={style.container}>
       <div className={style.createPerson} onClick={onCreatePersonClick}>
         Create Person
       </div>
+
+      <input value={search} onChange={(e) => setSearch(e.target.value)} />
       <div className={style.listContainer}>
-        {person.map((p) => (
-          <SideItem
-            {...p}
-            onClick={() => onOpen(p)}
-            onEdit={() => onEdit(p)}
-            onRelationClick={() => onRelationClick(p)}
-            key={p.id}
-            onShowDetail={() => showDetail(p)}
-          />
-        ))}
+        {person
+          .filter((i) =>
+            !search
+              ? true
+              : i.name.toLowerCase().indexOf(search.toLowerCase()) > -1
+          )
+          .map((p) => (
+            <SideItem {...p} onClick={() => onClick(p)} key={p.id} />
+          ))}
       </div>
     </div>
   );

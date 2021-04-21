@@ -7,12 +7,11 @@ import cx from 'classnames';
 import style from './Tree.module.scss';
 import { AppContext } from '../../app/ctx';
 
-type ClickType = 'open' | 'edit';
 type TreeProps = {
   person: Person;
   personList: Person[];
   relation: Relation[];
-  onClick: (person: Person, type: ClickType) => void;
+  onClick: (person: Person) => void;
   depth: number;
 };
 
@@ -25,27 +24,14 @@ const PersonRenderer = ({
 }: {
   person: Person;
   className?: string;
-  onClick: (type: ClickType) => void;
+  onClick: () => void;
 }) => {
-  const [showButtons, setShowButtons] = useState(false);
   return (
     <div
-      onClick={() => setShowButtons((prev) => !prev)}
+      onClick={() => onClick()}
       className={cx(genderClass[person.gender], className)}
     >
-      {!showButtons && person.name}
-
-      {showButtons && (
-        <>
-          <button onClick={(e) => (e.stopPropagation(), onClick('open'))}>
-            Open
-          </button>
-
-          <button onClick={(e) => (e.stopPropagation(), onClick('edit'))}>
-            Edit
-          </button>
-        </>
-      )}
+      {person.name}
     </div>
   );
 };
@@ -66,17 +52,17 @@ const TreeRecursive: React.FC<TreeProps> = ({
   return (
     <li>
       <div className="w">
-        <PersonRenderer person={person} onClick={(t) => onClick(person, t)} />
+        <PersonRenderer person={person} onClick={() => onClick(person)} />
         {buildedPerson.partners.map((pr) => (
           <PersonRenderer
             person={pr}
-            onClick={(t) => onClick(pr, t)}
+            onClick={() => onClick(pr)}
             className="pr"
             key={`${person.id}Partner${pr.id}`}
           />
         ))}
       </div>
-      {buildedPerson.children.length && depth < 1 ? (
+      {buildedPerson.children.length ? (
         <ul>
           {buildedPerson.children.map((child) => (
             <TreeRecursive
@@ -94,13 +80,14 @@ const TreeRecursive: React.FC<TreeProps> = ({
   );
 };
 
-export default ({ person }: { person: Person }) => {
-  const {
-    person: personList,
-    relation,
-    showRelationModal,
-    setPersonForTree,
-  } = useContext(AppContext);
+export default ({
+  person,
+  onClick,
+}: {
+  person: Person;
+  onClick: (person: Person) => void;
+}) => {
+  const { person: personList, relation } = useContext(AppContext);
 
   // const builded = useMemo(() => builder(person, personList, relation), [
   //   person,
@@ -121,16 +108,7 @@ export default ({ person }: { person: Person }) => {
         personList={personList}
         relation={relation}
         person={person}
-        onClick={(p, type) => {
-          switch (type) {
-            case 'edit':
-              showRelationModal(p);
-              return;
-            case 'open':
-              setPersonForTree(p);
-              return;
-          }
-        }}
+        onClick={onClick}
         depth={0}
       />
     </ul>
@@ -150,16 +128,19 @@ export default ({ person }: { person: Person }) => {
       </div>
     );
 
+    const str = ReactDOMServer.renderToString(element);
     const domItem = document.createElement('div');
     domItem.classList.add(style.sizeWrapper, 'tree');
-    domItem.innerHTML = ReactDOMServer.renderToString(element);
+    domItem.innerHTML = str;
     document.body.appendChild(domItem);
 
     const div = domItem.children[0];
+
     const ul = div.children[0];
     const li = ul.children[0];
-    const width = div.clientWidth;
-    const height = li.clientHeight;
+
+    const width = div.clientWidth + 50;
+    const height = li.clientHeight + 50;
 
     setSize({ width, height });
 
@@ -172,7 +153,6 @@ export default ({ person }: { person: Person }) => {
       style={{
         minWidth: size.width,
         minHeight: size.height,
-        transform: 'translateX(11%)',
       }}
     >
       {el}

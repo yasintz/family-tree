@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Popup from '../components/Popup';
 import Sidebar from '../components/Sidebar';
 import Tree from '../components/Tree';
+import builder from '../helper/builder';
 import { Person } from '../types';
 import AddRelation from './AddRelation/index';
 import RelationFinder from './AddRelation/RelationFinder';
@@ -34,6 +35,7 @@ const App: React.FC<AppProps> = () => {
   const [personForUpdate, setPersonForUpdate] = useState<Person>();
   const [showCreatePersonPopup, setShowCreatePersonPopup] = useState(false);
   const [personForTree, setPersonForTree] = useState<Person>();
+  const [personForAction, setPersonForAction] = useState<Person>();
   const {
     relation,
     person,
@@ -42,7 +44,7 @@ const App: React.FC<AppProps> = () => {
     updatePerson,
   } = useData();
   const [personSelector, setPersonSelector] = useState<{
-    cb: (v: Person) => void;
+    cb?: (v: Person) => void;
     person?: Person;
   }>();
 
@@ -58,30 +60,60 @@ const App: React.FC<AppProps> = () => {
         showCreatePersonModal: () => setShowCreatePersonPopup(true),
         showPersonSelector: setPersonSelector,
         setPersonForTree,
+        treeDepth: 3,
       }}
     >
       <div className={style.container}>
-        {/* <button
-          onClick={() => setShowSideBar((prev) => !prev)}
-          className={style.sidebarToggle}
-        >
-          {showSidebar ? 'Hide' : 'Show'} Sidebar
-        </button> */}
-
         {showSidebar && (
           <div className={style.sidebar}>
             <Sidebar
               person={person}
-              onRelationClick={setPersonForRelation}
-              onOpen={setPersonForTree}
+              onClick={setPersonForAction}
               onCreatePersonClick={() => setShowCreatePersonPopup(true)}
-              onEdit={setPersonForUpdate}
-              showDetail={(p) => setPersonSelector({ cb: () => 0, person: p })}
             />
           </div>
         )}
+        <div className={style.actionSidebar}>
+          {personForAction && (
+            <>
+              <h5>{personForAction.name}</h5>
+
+              <div>
+                <button onClick={() => setPersonForTree(personForAction)}>
+                  Open
+                </button>
+
+                <button onClick={() => setPersonForRelation(personForAction)}>
+                  Edit
+                </button>
+                <button
+                  onClick={() => setPersonSelector({ person: personForAction })}
+                >
+                  Detail
+                </button>
+                <button
+                  onClick={() => {
+                    const { parents } = builder(
+                      personForAction,
+                      person,
+                      relation
+                    );
+
+                    if (parents[0]) {
+                      setPersonForTree(parents[0]);
+                    }
+                  }}
+                >
+                  Open Parent
+                </button>
+              </div>
+            </>
+          )}
+        </div>
         <div className={style.treeContainer}>
-          {personForTree && <Tree person={personForTree} />}
+          {personForTree && (
+            <Tree person={personForTree} onClick={setPersonForAction} />
+          )}
         </div>
 
         <AddRelation
@@ -120,7 +152,7 @@ const App: React.FC<AppProps> = () => {
       >
         <RelationFinder
           mainPerson={personSelector?.person}
-          onSelect={personSelector?.cb || (() => 0)}
+          onSelect={personSelector?.cb}
         />
       </Popup>
     </AppContext.Provider>

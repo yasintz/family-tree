@@ -7,9 +7,10 @@ type ContextType = ReturnType<typeof useData> & {
   showCreatePersonModal: () => void;
   setPersonForTree: (person: Person) => void;
   showPersonSelector: (v: {
-    cb: (person: Person) => void;
+    cb?: (person: Person) => void;
     person?: Person;
   }) => void;
+  treeDepth: number;
 };
 
 export const AppContext = React.createContext<ContextType>({
@@ -22,4 +23,5 @@ export const AppContext = React.createContext<ContextType>({
   updatePerson: () => 0,
   showPersonSelector: () => 0,
   setPersonForTree: () => 0,
+  treeDepth: 3,
 });

@@ -123,7 +123,7 @@ const PersonRenderer: React.FC<PersonRendererProps> = ({
         ))}
       </div>
       <div>
-        <button onClick={() => ctx.showPersonSelector({ cb: () => 0, person })}>
+        <button onClick={() => ctx.showPersonSelector({ person })}>
           Detail
         </button>
         <button

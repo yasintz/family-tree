@@ -8,6 +8,7 @@
 .listContainer {
   overflow-y: auto;
   height: calc(100% - 32px);
+  margin-top: 8px;
 
   &::-webkit-scrollbar {
     display: none;
@@ -42,7 +43,7 @@
   cursor: pointer;
 
   span {
-    font-size: 24px;
+    font-size: 16px;
     color: #d6ba8d;
   }
 

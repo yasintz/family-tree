@@ -7,7 +7,7 @@ import { AppContext } from '../ctx';
 
 type RelationFinderProps = {
   mainPerson?: Person;
-  onSelect: (person: Person) => void;
+  onSelect?: (person: Person) => void;
 };
 
 const RenderPersonList: React.FC<{
@@ -35,9 +35,11 @@ const RenderPersonList: React.FC<{
 const PersonRelation = ({
   person,
   onClick,
+  renderAllPerson,
 }: {
   person?: Person;
   onClick: (person: Person) => void;
+  renderAllPerson: boolean;
 }) => {
   const [search, setSearch] = useState('');
   const { person: personList, relation, showCreatePersonModal } = useContext(
@@ -50,23 +52,27 @@ const PersonRelation = ({
 
   return (
     <div className={style.listContainer}>
-      <div className={style.allPerson}>
-        <div>
-          <button onClick={() => showCreatePersonModal()}>Create Person</button>
+      {renderAllPerson && (
+        <div className={style.allPerson}>
+          <div>
+            <button onClick={() => showCreatePersonModal()}>
+              Create Person
+            </button>
+          </div>
+          <div>
+            <input value={search} onChange={(e) => setSearch(e.target.value)} />
+          </div>
+          <RenderPersonList
+            personList={personList.filter((i) =>
+              !search
+                ? true
+                : i.name.toLowerCase().indexOf(search.toLowerCase()) > -1
+            )}
+            title="All Persons"
+            onClick={onClick}
+          />
         </div>
-        <div>
-          <input value={search} onChange={(e) => setSearch(e.target.value)} />
-        </div>
-        <RenderPersonList
-          personList={personList.filter((i) =>
-            !search
-              ? true
-              : i.name.toLowerCase().indexOf(search.toLowerCase()) > -1
-          )}
-          title="All Persons"
-          onClick={onClick}
-        />
-      </div>
+      )}
       {builded && (
         <>
           <RenderPersonList
@@ -115,7 +121,7 @@ const RelationFinder: React.FC<RelationFinderProps> = ({
   };
 
   useEffect(() => {
-    if (lastPerson) {
+    if (lastPerson && onSelect) {
       onSelect(lastPerson);
     }
   }, [onSelect, lastPerson]);
@@ -132,7 +138,7 @@ const RelationFinder: React.FC<RelationFinderProps> = ({
                 return copy;
               })
             }
-            onClick={() => handleClick(p)}
+            onClick={onSelect ? () => handleClick(p) : undefined}
             key={p.id + 'stack'}
           >
             {p.name}
@@ -140,7 +146,11 @@ const RelationFinder: React.FC<RelationFinderProps> = ({
         ))}
       </div>
 
-      <PersonRelation onClick={handleClick} person={lastPerson || mainPerson} />
+      <PersonRelation
+        renderAllPerson={!!onSelect}
+        onClick={handleClick}
+        person={lastPerson || mainPerson}
+      />
     </div>
   );
 };
