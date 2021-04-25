@@ -37,6 +37,9 @@
 
 .createPersonContent {
   padding: 16px;
+
+  margin: 10vw;
+  transform: scale(var(--scaleRate));
 }
 
 .actionSidebar {

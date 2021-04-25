@@ -128,30 +128,26 @@ const App: React.FC<AppProps> = () => {
         onClose={() => setPersonForRelation(undefined)}
       />
       <Popup
-        open={showCreatePersonPopup}
-        onClose={() => setShowCreatePersonPopup(false)}
+        open={showCreatePersonPopup || !!personForUpdate}
+        onClose={() => {
+          setShowCreatePersonPopup(false);
+          setPersonForUpdate(undefined);
+        }}
       >
         <CreatePerson
           onSubmit={(name, gender) => {
-            createPerson(name, gender);
-            setShowCreatePersonPopup(false);
-          }}
-        />
-      </Popup>
-      <Popup
-        open={!!personForUpdate}
-        onClose={() => setPersonForUpdate(undefined)}
-      >
-        {personForUpdate && (
-          <CreatePerson
-            onSubmit={(name, gender) => {
+            if (showCreatePersonPopup) {
+              createPerson(name, gender);
+            } else if (personForUpdate) {
               updatePerson(personForUpdate.id, { name, gender });
-              setPersonForUpdate(undefined);
-            }}
-            name={personForUpdate.name}
-            gender={personForUpdate.gender}
-          />
-        )}
+            }
+
+            setShowCreatePersonPopup(false);
+            setPersonForUpdate(undefined);
+          }}
+          name={personForUpdate?.name}
+          gender={personForUpdate?.gender}
+        />
       </Popup>
       <Popup
         open={!!personSelector}
