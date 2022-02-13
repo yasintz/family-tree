@@ -7,14 +7,14 @@ export interface PersonType {
   gender: Gender;
 }
 
-export interface Relation {
+export interface RelationType {
   id: string;
   main: string;
   second: string;
   type: 'parent' | 'partner';
 }
 
-export type Store = {
+export type StoreType = {
   person: PersonType[];
-  relation: Relation[];
+  relation: RelationType[];
 };

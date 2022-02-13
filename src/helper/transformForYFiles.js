@@ -1,6 +1,6 @@
-import { Gender, PersonType, Store } from '../types';
+import { Gender, PersonType, StoreType } from '../types';
 
-export function hh({ person, relation }: Store) {
+export function hh({ person, relation }: StoreType) {
   const partnerRelations = relation.filter((i) => i.type === 'partner');
 
   const user = (id: string, name: string, gender: Gender) => ({

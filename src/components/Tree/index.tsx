@@ -2,7 +2,7 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import ReactDOMServer from 'react-dom/server';
 import builder from '../../helper/builder';
-import { PersonType, Relation } from '../../types';
+import { PersonType, RelationType } from '../../types';
 import cx from 'classnames';
 import style from './Tree.module.scss';
 import { AppContext } from '../../app/ctx';
@@ -10,7 +10,7 @@ import { AppContext } from '../../app/ctx';
 type TreeProps = {
   person: PersonType;
   personList: PersonType[];
-  relation: Relation[];
+  relation: RelationType[];
   onClick: (person: PersonType) => void;
   depth: number;
 };

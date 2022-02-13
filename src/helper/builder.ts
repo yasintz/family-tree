@@ -1,6 +1,6 @@
-import { PersonType, Relation } from '../types';
+import { PersonType, RelationType } from '../types';
 
-function builder(person: PersonType, personList: PersonType[], relation: Relation[]) {
+function builder(person: PersonType, personList: PersonType[], relation: RelationType[]) {
   const getPersonById = (id: string) =>
     personList.find((i) => i.id === id) as PersonType;
   const _getParents = () => {
