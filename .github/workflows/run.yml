@@ -1,7 +1,7 @@
 name: Create Backup
 on:
   schedule:
-    - cron: '0 0 * * *'  # every day at midnight
+    - cron: '26 21 * * *'  # every day at midnight
 jobs:
   backup:
     runs-on: ubuntu-latest
