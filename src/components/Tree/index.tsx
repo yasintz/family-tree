@@ -15,7 +15,7 @@ type TreeProps = {
   depth: number;
 };
 
-const genderClass = ['m', 'f'];
+const genderClass = ['male', 'female'];
 
 const PersonRenderer = ({
   person,
@@ -43,11 +43,10 @@ const TreeRecursive: React.FC<TreeProps> = ({
   onClick,
   depth,
 }) => {
-  const buildedPerson = useMemo(() => builder(person, personList, relation), [
-    person,
-    personList,
-    relation,
-  ]);
+  const buildedPerson = useMemo(
+    () => builder(person, personList, relation),
+    [person, personList, relation]
+  );
 
   return (
     <li>
@@ -57,7 +56,7 @@ const TreeRecursive: React.FC<TreeProps> = ({
           <PersonRenderer
             person={pr}
             onClick={() => onClick(pr)}
-            className="pr"
+            className="inactive-partner"
             key={`${person.id}Partner${pr.id}`}
           />
         ))}

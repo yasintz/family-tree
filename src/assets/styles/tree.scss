@@ -76,8 +76,8 @@
         cursor: pointer;
         position: relative;
 
-        .m,
-        .f {
+        .male,
+        .female {
           display: inline-block;
           width: 90px;
           padding: 10px;
@@ -87,14 +87,14 @@
           -moz-border-radius: 5px;
         }
 
-        .pr {
+        .inactive-partner {
           opacity: 0.7;
           transform: scale(0.8);
         }
-        .m {
+        .male {
           background-color: lightblue;
         }
-        .f {
+        .female {
           background-color: lightpink;
         }
       }
