@@ -1,11 +1,10 @@
 // reference: https://jwcooney.com/2016/08/21/example-pure-css-family-tree-markup/
-import React, { useContext, useEffect, useMemo, useState } from 'react';
-import ReactDOMServer from 'react-dom/server';
+import React, { useContext, useMemo, useState } from 'react';
 import builder from '../../helper/builder';
 import { PersonType, RelationType } from '../../types';
-import style from './Tree.module.scss';
 import { AppContext } from '../../app/ctx';
 import Person from './Person';
+import useTree from './useTree';
 
 type TreeProps = {
   person: PersonType;
@@ -72,15 +71,6 @@ const Comp = ({
 }) => {
   const { person: personList, relation, treeDepth } = useContext(AppContext);
 
-  // const builded = useMemo(() => builder(person, personList, relation), [
-  //   person,
-  //   personList,
-  //   relation,
-  // ]);
-  // const { parents } = builded;
-
-  // const anyParent = parents[0];
-
   const [size, setSize] = useState({
     width: 0,
     height: 0,
@@ -96,40 +86,7 @@ const Comp = ({
       />
     </ul>
   );
-
-  useEffect(() => {
-    const element = (
-      <div>
-        <ul>
-          <li>
-            <div className="tree-wrapper">
-              <div className="female">Parent</div>
-            </div>
-            {el}
-          </li>
-        </ul>
-      </div>
-    );
-
-    const str = ReactDOMServer.renderToString(element);
-    const domItem = document.createElement('div');
-    domItem.classList.add(style.sizeWrapper, 'tree');
-    domItem.innerHTML = str;
-    document.body.appendChild(domItem);
-
-    const div = domItem.children[0];
-
-    const ul = div.children[0];
-    const li = ul.children[0];
-
-    const width = div.clientWidth + 50;
-    const height = li.clientHeight + 50;
-
-    setSize({ width, height });
-
-    document.body.removeChild(domItem);
-    // eslint-disable-next-line
-  }, [person, personList, relation, treeDepth]);
+  useTree(el, setSize, [person, personList, relation, treeDepth]);
 
   return (
     <div
