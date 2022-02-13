@@ -1,20 +1,20 @@
 import React from 'react';
-import { Person } from '../types';
+import { PersonType } from '../types';
 import useData from './data';
 
 type ContextType = ReturnType<typeof useData> & {
-  showRelationModal: (person: Person) => void;
+  showRelationModal: (person: PersonType) => void;
   showCreatePersonModal: () => void;
-  setPersonForTree: (person: Person) => void;
+  setPersonForTree: (person: PersonType) => void;
   showPersonSelector: (v: {
-    cb?: (person: Person) => void;
-    person?: Person;
+    cb?: (person: PersonType) => void;
+    person?: PersonType;
   }) => void;
   treeDepth: number;
 };
 
 export const AppContext = React.createContext<ContextType>({
-  createPerson: () => ({} as Person),
+  createPerson: () => ({} as PersonType),
   createRelation: () => 0,
   person: [],
   relation: [],

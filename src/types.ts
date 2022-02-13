@@ -1,13 +1,13 @@
 export type Gender = 0 | 1; // 0=male 1=female
 export type RelationType = 'parent' | 'partner' | 'children';
 
-export interface Person {
+export interface PersonType {
   id: string;
   name: string;
   gender: Gender;
 }
-export interface SerializedPerson extends Person {
-  partners: Person[];
+export interface SerializedPerson extends PersonType {
+  partners: PersonType[];
   children: SerializedPerson[];
   depth: number;
 }
@@ -20,6 +20,6 @@ export interface Relation {
 }
 
 export type Store = {
-  person: Person[];
+  person: PersonType[];
   relation: Relation[];
 };

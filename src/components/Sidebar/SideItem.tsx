@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { Person } from '../../types';
+import { PersonType } from '../../types';
 import style from './Sidebar.module.scss';
 import cx from 'classnames';
 
 type SideItemProps = {
   onClick: () => void;
-} & Person;
+} & PersonType;
 
 const SideItem: React.FC<SideItemProps> = ({ gender, name, onClick }) => {
   return (

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Popup from '../components/Popup';
 import Sidebar from '../components/Sidebar';
 import Tree from '../components/Tree';
-import { Person } from '../types';
+import { PersonType } from '../types';
 import AddRelation from './AddRelation/index';
 import RelationFinder from './RelationDetail';
 import style from './app.module.scss';
@@ -13,23 +13,18 @@ import useData from './data';
 type AppProps = {};
 
 const App: React.FC<AppProps> = () => {
-  const [personForRelation, setPersonForRelation] = useState<Person>();
-  const [personForUpdate, setPersonForUpdate] = useState<Person>();
+  const [personForRelation, setPersonForRelation] = useState<PersonType>();
+  const [personForUpdate, setPersonForUpdate] = useState<PersonType>();
   const [showCreatePersonPopup, setShowCreatePersonPopup] = useState(false);
-  const [personForTree, setPersonForTree] = useState<Person>();
-  const [personForAction, setPersonForAction] = useState<Person>();
-  const [personForDetail, setPersonForDetail] = useState<Person>();
+  const [personForTree, setPersonForTree] = useState<PersonType>();
+  const [personForAction, setPersonForAction] = useState<PersonType>();
+  const [personForDetail, setPersonForDetail] = useState<PersonType>();
   const [treeDepth, setTreeDepth] = useState<number>(3);
-  const {
-    relation,
-    person,
-    createPerson,
-    createRelation,
-    updatePerson,
-  } = useData();
+  const { relation, person, createPerson, createRelation, updatePerson } =
+    useData();
   const [personSelector, setPersonSelector] = useState<{
-    cb?: (v: Person) => void;
-    person?: Person;
+    cb?: (v: PersonType) => void;
+    person?: PersonType;
   }>();
 
   const actions = [

@@ -1,20 +1,20 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import style from './RelationDetail.module.scss';
-import { Person } from '../../types';
+import { PersonType } from '../../types';
 import cx from 'classnames';
 import builder from '../../helper/builder';
 import { AppContext } from '../ctx';
 
 type RelationFinderProps = {
-  mainPerson?: Person;
-  onSelect?: (person: Person) => void;
+  mainPerson?: PersonType;
+  onSelect?: (person: PersonType) => void;
   renderAllPerson: boolean;
 };
 
 const RenderPersonList: React.FC<{
-  personList: Person[];
+  personList: PersonType[];
   title: string;
-  onClick: (person: Person) => void;
+  onClick: (person: PersonType) => void;
 }> = ({ personList, title, onClick }) => {
   if (personList.length === 0) {
     return null;
@@ -38,8 +38,8 @@ const PersonRelation = ({
   onClick,
   renderAllPerson,
 }: {
-  person?: Person;
-  onClick: (person: Person) => void;
+  person?: PersonType;
+  onClick: (person: PersonType) => void;
   renderAllPerson: boolean;
 }) => {
   const [search, setSearch] = useState('');
@@ -107,10 +107,10 @@ const RelationFinder: React.FC<RelationFinderProps> = ({
   onSelect,
   renderAllPerson,
 }) => {
-  const [stack, setStack] = useState<Person[]>([]);
+  const [stack, setStack] = useState<PersonType[]>([]);
   const stackRef = useRef<HTMLDivElement>();
   const lastPerson = stack[stack.length - 1];
-  const handleClick = (person: Person) => {
+  const handleClick = (person: PersonType) => {
     setStack((prev) => [...prev.filter((i) => i.id !== person.id), person]);
     setTimeout(() => {
       if (stackRef.current) {

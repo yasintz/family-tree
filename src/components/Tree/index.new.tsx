@@ -3,9 +3,9 @@ import React, { useContext, useEffect, useMemo, useState } from 'react';
 import ReactDOMServer from 'react-dom/server';
 import builder from '../../helper/builder';
 import { PersonType, Relation } from '../../types';
-import cx from 'classnames';
 import style from './Tree.module.scss';
 import { AppContext } from '../../app/ctx';
+import PersonRenderer from './Person';
 
 type TreeProps = {
   person: PersonType;
@@ -13,27 +13,6 @@ type TreeProps = {
   relation: Relation[];
   onClick: (person: PersonType) => void;
   depth: number;
-};
-
-const genderClass = ['m', 'f'];
-
-const PersonRenderer = ({
-  person,
-  className,
-  onClick,
-}: {
-  person: PersonType;
-  className?: string;
-  onClick: () => void;
-}) => {
-  return (
-    <div
-      onClick={() => onClick()}
-      className={cx(genderClass[person.gender], className)}
-    >
-      {person.name}
-    </div>
-  );
 };
 
 const TreeRecursive: React.FC<TreeProps> = ({
@@ -51,12 +30,17 @@ const TreeRecursive: React.FC<TreeProps> = ({
   return (
     <li>
       <div className="w">
-        <PersonRenderer person={person} onClick={() => onClick(person)} />
+        <PersonRenderer
+          gender={person.gender}
+          name={person.name}
+          onClick={() => onClick(person)}
+        />
         {buildedPerson.partners.map((pr) => (
           <PersonRenderer
-            person={pr}
-            onClick={() => onClick(pr)}
+            gender={pr.gender}
+            name={pr.name}
             className="pr"
+            onClick={() => onClick(pr)}
             key={`${person.id}Partner${pr.id}`}
           />
         ))}
