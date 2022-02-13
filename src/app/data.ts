@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Gender, PersonType, Relation, RelationType, Store } from '../types';
+import { Gender, PersonType, Relation, RelationValueType, Store } from '../types';
 import throttle from 'lodash.throttle';
 const uid = () => Math.random().toString(36).substr(2);
 
@@ -61,7 +61,7 @@ function useData() {
 
       return arrayCopy;
     });
-  type RelationParam = { type: RelationType; main: string; second: string };
+  type RelationParam = { type: RelationValueType; main: string; second: string };
 
   const handleRelation = ({ main, second, type }: RelationParam) => {
     const d: Relation = {
@@ -71,7 +71,7 @@ function useData() {
       id: '',
     };
 
-    const mapp: Record<RelationType, Relation> = {
+    const mapp: Record<RelationValueType, Relation> = {
       children: {
         type: 'parent',
         main: second,

@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import style from './AddRelation.module.scss';
-import { PersonType, RelationType } from '../../types';
+import { PersonType, RelationValueType } from '../../types';
 import TypeSelector from '../TypeSelector';
 import { AppContext } from '../ctx';
 import { popupHoc } from '../../components/Popup';
@@ -33,7 +33,7 @@ const PersonSelectorBox: React.FC<PersonSelectorBoxProps> = ({
 };
 
 type LineItem = {
-  type: RelationType;
+  type: RelationValueType;
   main?: PersonType;
   extra?: PersonType;
   id: string;
@@ -159,7 +159,7 @@ const AddRelation: React.FC<AddRelationProps> = ({ person }) => {
     if (person) {
       const args = (lines.filter((i) => i.main) as {
         main: PersonType;
-        type: RelationType;
+        type: RelationValueType;
         extra?: PersonType;
       }[]).reduce((acc, cur) => {
         acc.push({
@@ -183,7 +183,7 @@ const AddRelation: React.FC<AddRelationProps> = ({ person }) => {
           }
         }
         return acc;
-      }, [] as { type: RelationType; main: string; second: string }[]);
+      }, [] as { type: RelationValueType; main: string; second: string }[]);
 
       createRelation(...args);
     }
