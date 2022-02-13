@@ -1,0 +1,17 @@
+name: Push commit
+on:
+  schedule:
+    - cron: '0 0 * * *'  # every day at midnight
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Create backup file
+        run: curl https://api.npoint.io/ae8995c6924d92c556f8 > "backup/$(date +%m_%d_%Y).json"
+      - name: Commit backup
+        run: |
+          git config --global user.name 'Github Backup Action'
+          git config --global user.email 'github_backup_action@users.noreply.github.com'
+          git commit -am "Created Backup $(date +%m_%d_%Y)"
+          git push
