@@ -7,8 +7,8 @@ type IconComponentProps = {
 } & IconProps;
 
 const Icon: React.FC<IconComponentProps> = ({ name, size = 16, ...props }) => {
-  const _Icon = FIcon[name];
-  return <_Icon size={size} {...props} />;
+  const FeatherIcon = FIcon[name];
+  return <FeatherIcon size={size} {...props} />;
 };
 
 export default Icon;
