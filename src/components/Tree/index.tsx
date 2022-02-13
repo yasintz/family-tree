@@ -2,16 +2,16 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import ReactDOMServer from 'react-dom/server';
 import builder from '../../helper/builder';
-import { Person, Relation } from '../../types';
+import { PersonType, Relation } from '../../types';
 import cx from 'classnames';
 import style from './Tree.module.scss';
 import { AppContext } from '../../app/ctx';
 
 type TreeProps = {
-  person: Person;
-  personList: Person[];
+  person: PersonType;
+  personList: PersonType[];
   relation: Relation[];
-  onClick: (person: Person) => void;
+  onClick: (person: PersonType) => void;
   depth: number;
 };
 
@@ -22,7 +22,7 @@ const PersonRenderer = ({
   className,
   onClick,
 }: {
-  person: Person;
+  person: PersonType;
   className?: string;
   onClick: () => void;
 }) => {
@@ -84,8 +84,8 @@ const Comp = ({
   person,
   onClick,
 }: {
-  person: Person;
-  onClick: (person: Person) => void;
+  person: PersonType;
+  onClick: (person: PersonType) => void;
 }) => {
   const { person: personList, relation, treeDepth } = useContext(AppContext);
 

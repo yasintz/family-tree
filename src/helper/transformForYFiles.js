@@ -1,4 +1,4 @@
-import { Gender, Person, Store } from '../types';
+import { Gender, PersonType, Store } from '../types';
 
 export function hh({ person, relation }: Store) {
   const partnerRelations = relation.filter((i) => i.type === 'partner');
@@ -68,7 +68,7 @@ export function hh({ person, relation }: Store) {
     .filter((i) => getParents(i.id).length === 1)
     .map((per) => ({
       per,
-      parent: person.find((p) => p.id === getParents(per.id)[0].main) as Person,
+      parent: person.find((p) => p.id === getParents(per.id)[0].main) as PersonType,
     }));
 
   const conn_onlyOneParent = onlyOneParent.map(({ parent, per }) => ({

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Gender, Person, Relation, RelationType, Store } from '../types';
+import { Gender, PersonType, Relation, RelationType, Store } from '../types';
 import throttle from 'lodash.throttle';
 const uid = () => Math.random().toString(36).substr(2);
 
@@ -26,7 +26,7 @@ const getPromise = db.get();
 
 let isFetched = false;
 function useData() {
-  const [person, setPerson] = useState<Person[]>([]);
+  const [person, setPerson] = useState<PersonType[]>([]);
   const [relation, setRelation] = useState<Relation[]>([]);
 
   const createPerson = (name: string, gender: Gender) => {
@@ -41,7 +41,7 @@ function useData() {
     return newPerson;
   };
 
-  const updatePerson = (id: string, newPerson: Partial<Person>) =>
+  const updatePerson = (id: string, newPerson: Partial<PersonType>) =>
     setPerson((prev) => {
       const prs = prev.findIndex((p) => p.id === id);
 
