@@ -50,7 +50,7 @@ const TreeRecursive: React.FC<TreeProps> = ({
 
   return (
     <li>
-      <div className="w">
+      <div className="tree-wrapper">
         <PersonRenderer person={person} onClick={() => onClick(person)} />
         {buildedPerson.partners.map((pr) => (
           <PersonRenderer
@@ -118,8 +118,8 @@ const Comp = ({
       <div>
         <ul>
           <li>
-            <div className="w">
-              <div className="f">Parent</div>
+            <div className="tree-wrapper">
+              <div className="female">Parent</div>
             </div>
             {el}
           </li>
