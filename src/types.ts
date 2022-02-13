@@ -6,11 +6,6 @@ export interface PersonType {
   name: string;
   gender: Gender;
 }
-export interface SerializedPerson extends PersonType {
-  partners: PersonType[];
-  children: SerializedPerson[];
-  depth: number;
-}
 
 export interface Relation {
   id: string;
