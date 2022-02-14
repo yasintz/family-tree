@@ -10,10 +10,31 @@ import CreatePerson from './CreatePerson';
 import { AppContext } from './ctx';
 import useData from './data';
 import { getPersonTreeByDepth } from '../helper/builder';
+import styled from 'styled-components';
+import RelationTree from './RelationTree';
+
+const StyledTreeContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const StyledDepthInputContainer = styled.label`
+  margin: 12px;
+`;
 
 type AppProps = {};
 
+enum PageMode {
+  Relation,
+  Tree,
+  Detail,
+  UpdatePerson,
+}
+
 const App: React.FC<AppProps> = () => {
+  const [mode, setMode] = useState<PageMode>(PageMode.Tree);
+  const [mainPerson, setMainPerson] = useState<PersonType>();
+
   const [personForRelation, setPersonForRelation] = useState<PersonType>();
   const [personForUpdate, setPersonForUpdate] = useState<PersonType>();
   const [showCreatePersonPopup, setShowCreatePersonPopup] = useState(false);
@@ -78,14 +99,6 @@ const App: React.FC<AppProps> = () => {
     >
       <div className={style.container}>
         <div className={style.sidebar}>
-          <label>
-            Depth:
-            <input
-              type="number"
-              value={treeDepth.toString()}
-              onChange={(e) => setTreeDepth(parseInt(e.target.value))}
-            />
-          </label>
           <Sidebar
             person={person}
             onClick={(person) => {
@@ -112,8 +125,16 @@ const App: React.FC<AppProps> = () => {
             </>
           )}
         </div>
-        <div className={style.treeContainer}>
-          {personForDetail && (
+        {personForDetail && (
+          <div className={style.treeContainer}>
+            <RelationTree
+              mainPerson={personForDetail}
+              onSelect={setPersonForDetail}
+            />
+          </div>
+        )}
+        {/* {personForDetail && (
+          <div className={style.treeContainer}>
             <div className={style.relationDetail}>
               <RelationFinder
                 mainPerson={personForDetail}
@@ -121,11 +142,25 @@ const App: React.FC<AppProps> = () => {
                 renderAllPerson={false}
               />
             </div>
-          )}
-          {!personForDetail && personTree && (
-            <Tree person={personTree} onClick={setPersonForAction} />
-          )}
-        </div>
+          </div>
+        )} */}
+
+        {!personForDetail && personTree && (
+          <StyledTreeContainer>
+            <StyledDepthInputContainer>
+              Depth:
+              <input
+                type="number"
+                value={treeDepth.toString()}
+                onChange={(e) => setTreeDepth(parseInt(e.target.value))}
+              />
+            </StyledDepthInputContainer>
+
+            <div className={style.treeContainer}>
+              <Tree person={personTree} onClick={setPersonForAction} />
+            </div>
+          </StyledTreeContainer>
+        )}
       </div>
       <AddRelation
         person={personForRelation}

@@ -6,7 +6,7 @@ import TreeSizeCalc from './TreeSizeCalc';
 
 type PersonTreeProps = {
   person: PersonTreeType;
-  onClick: (person: PersonType) => void;
+  onClick?: (person: PersonType) => void;
   child?: boolean;
 };
 
@@ -17,13 +17,14 @@ const PersonTree: React.FC<PersonTreeProps> = ({ person, onClick, child }) => {
         <Person
           personName={person.name}
           gender={person.gender}
-          onClick={() => onClick(person)}
+          onClick={() => onClick?.(person)}
+          highlight={person.highlight}
         />
         {person.partners.map((pr) => (
           <Person
             personName={pr.name}
             gender={pr.gender}
-            onClick={() => onClick(pr)}
+            onClick={() => onClick?.(pr)}
             className="inactive-partner"
             key={`${person.id}Partner${pr.id}`}
           />
@@ -53,7 +54,7 @@ const PersonTree: React.FC<PersonTreeProps> = ({ person, onClick, child }) => {
 
 type TreeProps = {
   person: PersonTreeType;
-  onClick: (person: PersonType) => void;
+  onClick?: (person: PersonType) => void;
 };
 
 const Tree: React.FC<TreeProps> = ({ person, onClick }) => {

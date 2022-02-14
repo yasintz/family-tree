@@ -110,6 +110,7 @@ const RelationFinder: React.FC<RelationFinderProps> = ({
   const [stack, setStack] = useState<PersonType[]>([]);
   const stackRef = useRef<HTMLDivElement>();
   const lastPerson = stack[stack.length - 1];
+
   const handleClick = (person: PersonType) => {
     setStack((prev) => [...prev.filter((i) => i.id !== person.id), person]);
     setTimeout(() => {
