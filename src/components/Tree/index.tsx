@@ -1,19 +1,17 @@
-// reference: https://jwcooney.com/2016/08/21/example-pure-css-family-tree-markup/
-import React, { useContext, useMemo, useState } from 'react';
-import { getPersonTreeByDepth } from '../../helper/builder';
-import { PersonTree, PersonType } from '../../types';
-import { AppContext } from '../../app/ctx';
+import React, { useState } from 'react';
+import { PersonTreeType, PersonType } from '../../types';
 import Person from './Person';
 import Portal from '../Portal';
 import TreeSizeCalc from './TreeSizeCalc';
 
-type TreeProps = {
-  person: PersonTree;
+type PersonTreeProps = {
+  person: PersonTreeType;
   onClick: (person: PersonType) => void;
+  child?: boolean;
 };
 
-const Tree: React.FC<TreeProps> = ({ person, onClick }) => {
-  return (
+const PersonTree: React.FC<PersonTreeProps> = ({ person, onClick, child }) => {
+  const content = (
     <li>
       <div className="tree-wrapper">
         <Person
@@ -34,42 +32,37 @@ const Tree: React.FC<TreeProps> = ({ person, onClick }) => {
       {person.children.length ? (
         <ul>
           {person.children.map((child) => (
-            <Tree
+            <PersonTree
               person={child}
               onClick={onClick}
               key={`${person.id}Child${child.id}`}
+              child
             />
           ))}
         </ul>
       ) : undefined}
     </li>
   );
+
+  if (child) {
+    return content;
+  }
+
+  return <ul>{content}</ul>;
 };
 
-const Comp = ({
-  person,
-  onClick,
-}: {
-  person: PersonType;
+type TreeProps = {
+  person: PersonTreeType;
   onClick: (person: PersonType) => void;
-}) => {
-  const { person: personList, relation, treeDepth } = useContext(AppContext);
+};
 
-  const personTree = useMemo(
-    () => getPersonTreeByDepth(person, treeDepth, personList, relation),
-    [person, personList, relation, treeDepth]
-  );
-
+const Tree: React.FC<TreeProps> = ({ person, onClick }) => {
   const [size, setSize] = useState({
     width: 0,
     height: 0,
   });
 
-  const el = (
-    <ul>
-      <Tree person={personTree} onClick={onClick} />
-    </ul>
-  );
+  const el = <PersonTree person={person} onClick={onClick} />;
 
   return (
     <>
@@ -83,10 +76,7 @@ const Comp = ({
         {el}
       </div>
       <Portal>
-        <TreeSizeCalc
-          deps={[person, personList, relation, treeDepth]}
-          setSize={setSize}
-        >
+        <TreeSizeCalc deps={[person]} setSize={setSize}>
           {el}
         </TreeSizeCalc>
       </Portal>
@@ -94,4 +84,4 @@ const Comp = ({
   );
 };
 
-export default Comp;
+export default Tree;

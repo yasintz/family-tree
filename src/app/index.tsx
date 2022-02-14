@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import Popup from '../components/Popup';
 import Sidebar from '../components/Sidebar';
 import Tree from '../components/Tree';
@@ -9,6 +9,7 @@ import style from './app.module.scss';
 import CreatePerson from './CreatePerson';
 import { AppContext } from './ctx';
 import useData from './data';
+import { getPersonTreeByDepth } from '../helper/builder';
 
 type AppProps = {};
 
@@ -20,17 +21,20 @@ const App: React.FC<AppProps> = () => {
   const [personForAction, setPersonForAction] = useState<PersonType>();
   const [personForDetail, setPersonForDetail] = useState<PersonType>();
   const [treeDepth, setTreeDepth] = useState<number>(3);
-  const {
-    relation,
-    person,
-    createPerson,
-    createRelation,
-    updatePerson,
-  } = useData();
+  const { relation, person, createPerson, createRelation, updatePerson } =
+    useData();
   const [personSelector, setPersonSelector] = useState<{
     cb?: (v: PersonType) => void;
     person?: PersonType;
   }>();
+
+  const personTree = useMemo(
+    () =>
+      personForTree
+        ? getPersonTreeByDepth(personForTree, treeDepth, person, relation)
+        : null,
+    [person, personForTree, relation, treeDepth]
+  );
 
   const actions = [
     {
@@ -118,8 +122,8 @@ const App: React.FC<AppProps> = () => {
               />
             </div>
           )}
-          {!personForDetail && personForTree && (
-            <Tree person={personForTree} onClick={setPersonForAction} />
+          {!personForDetail && personTree && (
+            <Tree person={personTree} onClick={setPersonForAction} />
           )}
         </div>
       </div>

@@ -19,7 +19,7 @@ export type StoreType = {
   relation: RelationType[];
 };
 
-export type PersonTree = PersonType & {
-  children: PersonTree[];
+export type PersonTreeType = PersonType & {
+  children: PersonTreeType[];
   partners: PersonType[];
 };

@@ -1,11 +1,11 @@
-import { PersonTree, PersonType, RelationType } from '../types';
+import { PersonTreeType, PersonType, RelationType } from '../types';
 
 function getPersonTreeByDepth(
   p: PersonType,
   depth: number,
   personList: PersonType[],
   relation: RelationType[]
-): PersonTree {
+): PersonTreeType {
   const buildedPerson = builder(p, personList, relation);
 
   return {
