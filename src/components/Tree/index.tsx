@@ -4,7 +4,8 @@ import builder from '../../helper/builder';
 import { PersonType, RelationType } from '../../types';
 import { AppContext } from '../../app/ctx';
 import Person from './Person';
-import useTree from './useTree';
+import Portal from '../Portal';
+import TreeSizeCalc from './TreeSizeCalc';
 
 type TreeProps = {
   person: PersonType;
@@ -86,18 +87,27 @@ const Comp = ({
       />
     </ul>
   );
-  useTree(el, setSize, [person, personList, relation, treeDepth]);
 
   return (
-    <div
-      className="tree"
-      style={{
-        minWidth: size.width,
-        minHeight: size.height,
-      }}
-    >
-      {el}
-    </div>
+    <>
+      <div
+        className="tree"
+        style={{
+          minWidth: size.width,
+          minHeight: size.height,
+        }}
+      >
+        {el}
+      </div>
+      <Portal>
+        <TreeSizeCalc
+          deps={[person, personList, relation, treeDepth]}
+          setSize={setSize}
+        >
+          {el}
+        </TreeSizeCalc>
+      </Portal>
+    </>
   );
 };
 
