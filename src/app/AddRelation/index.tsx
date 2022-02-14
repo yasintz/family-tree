@@ -25,7 +25,9 @@ const PersonSelectorBox: React.FC<PersonSelectorBoxProps> = ({
   return (
     <div
       className={style.personSelector}
-      onClick={() => ctx.showPersonSelector({ cb: setPerson, person: base })}
+      onClick={() =>
+        ctx.showPersonSelector({ cb: setPerson, person: person || base })
+      }
     >
       {person?.name || ``}
     </div>
@@ -157,11 +159,13 @@ const AddRelation: React.FC<AddRelationProps> = ({ person }) => {
 
   const handleGenerate = (lines: LineItem[]) => {
     if (person) {
-      const args = (lines.filter((i) => i.main) as {
-        main: PersonType;
-        type: RelationValueType;
-        extra?: PersonType;
-      }[]).reduce((acc, cur) => {
+      const args = (
+        lines.filter((i) => i.main) as {
+          main: PersonType;
+          type: RelationValueType;
+          extra?: PersonType;
+        }[]
+      ).reduce((acc, cur) => {
         acc.push({
           type: cur.type,
           main: person?.id,

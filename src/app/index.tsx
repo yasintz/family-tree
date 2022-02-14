@@ -34,6 +34,7 @@ enum PageMode {
 const App: React.FC<AppProps> = () => {
   const [mode, setMode] = useState<PageMode>(PageMode.Tree);
   const [mainPerson, setMainPerson] = useState<PersonType>();
+  const [isOldRelation, setIsOldRelation] = useState(false);
 
   const [personForRelation, setPersonForRelation] = useState<PersonType>();
   const [personForUpdate, setPersonForUpdate] = useState<PersonType>();
@@ -78,6 +79,12 @@ const App: React.FC<AppProps> = () => {
       handler: () => {
         setPersonForDetail(personForAction);
         setPersonForTree(undefined);
+      },
+    },
+    {
+      text: `Old Relation Mode: ${isOldRelation ? 'on' : 'off'}`,
+      handler: () => {
+        setIsOldRelation((prev) => !prev);
       },
     },
   ];
@@ -127,23 +134,23 @@ const App: React.FC<AppProps> = () => {
         </div>
         {personForDetail && (
           <div className={style.treeContainer}>
-            <RelationTree
-              mainPerson={personForDetail}
-              onSelect={setPersonForDetail}
-            />
+            {isOldRelation ? (
+              <div className={style.relationDetail}>
+                <RelationFinder
+                  mainPerson={personForDetail}
+                  onSelect={setPersonForAction}
+                  renderAllPerson={false}
+                  isOldRelation
+                />
+              </div>
+            ) : (
+              <RelationTree
+                mainPerson={personForDetail}
+                onSelect={setPersonForDetail}
+              />
+            )}
           </div>
         )}
-        {/* {personForDetail && (
-          <div className={style.treeContainer}>
-            <div className={style.relationDetail}>
-              <RelationFinder
-                mainPerson={personForDetail}
-                onSelect={setPersonForAction}
-                renderAllPerson={false}
-              />
-            </div>
-          </div>
-        )} */}
 
         {!personForDetail && personTree && (
           <StyledTreeContainer>
@@ -197,6 +204,7 @@ const App: React.FC<AppProps> = () => {
             mainPerson={personSelector?.person}
             onSelect={personSelector?.cb}
             renderAllPerson
+            isOldRelation={isOldRelation}
           />
         </div>
       </Popup>

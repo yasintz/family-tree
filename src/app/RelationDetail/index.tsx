@@ -4,11 +4,13 @@ import { PersonType } from '../../types';
 import cx from 'classnames';
 import builder from '../../helper/builder';
 import { AppContext } from '../ctx';
+import RelationTree from '../RelationTree';
 
 type RelationFinderProps = {
   mainPerson?: PersonType;
   onSelect?: (person: PersonType) => void;
   renderAllPerson: boolean;
+  isOldRelation?: boolean;
 };
 
 const RenderPersonList: React.FC<{
@@ -37,15 +39,19 @@ const PersonRelation = ({
   person,
   onClick,
   renderAllPerson,
+  isOldRelation,
 }: {
   person?: PersonType;
   onClick: (person: PersonType) => void;
   renderAllPerson: boolean;
+  isOldRelation?: boolean;
 }) => {
   const [search, setSearch] = useState('');
-  const { person: personList, relation, showCreatePersonModal } = useContext(
-    AppContext
-  );
+  const {
+    person: personList,
+    relation,
+    showCreatePersonModal,
+  } = useContext(AppContext);
   const builded = useMemo(
     () => (person ? builder(person, personList, relation) : null),
     [person, relation, personList]
@@ -74,7 +80,7 @@ const PersonRelation = ({
           />
         </div>
       )}
-      {builded && (
+      {builded && isOldRelation && (
         <>
           <RenderPersonList
             personList={builded.children}
@@ -98,6 +104,9 @@ const PersonRelation = ({
           />
         </>
       )}
+      {person && !isOldRelation && (
+        <RelationTree mainPerson={person} onSelect={onClick} inner />
+      )}
     </div>
   );
 };
@@ -106,6 +115,7 @@ const RelationFinder: React.FC<RelationFinderProps> = ({
   mainPerson,
   onSelect,
   renderAllPerson,
+  isOldRelation,
 }) => {
   const [stack, setStack] = useState<PersonType[]>([]);
   const stackRef = useRef<HTMLDivElement>();
@@ -157,6 +167,7 @@ const RelationFinder: React.FC<RelationFinderProps> = ({
         renderAllPerson={renderAllPerson}
         onClick={handleClick}
         person={lastPerson || mainPerson}
+        isOldRelation={isOldRelation}
       />
     </div>
   );

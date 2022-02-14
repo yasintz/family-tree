@@ -7,10 +7,11 @@ import { AppContext } from './ctx';
 import _ from 'lodash';
 import style from './RelationDetail/RelationDetail.module.scss';
 
-const StyledRelationTreeContainer = styled.div`
+const StyledRelationTreeContainer = styled.div<{ $inner?: boolean }>`
   display: flex;
   flex-direction: column;
   height: 100%;
+  ${(props) => (props.$inner ? 'width: calc(100% - 150px);' : '')}
 `;
 
 const StyledWrapper = styled.div`
@@ -84,11 +85,13 @@ const PersonRelation: React.FC<PersonRelationProps> = ({ person, onClick }) => {
 type RelationTreeProps = {
   mainPerson: PersonType;
   onSelect: (person: PersonType) => void;
+  inner?: boolean;
 };
 
 const RelationTree: React.FC<RelationTreeProps> = ({
   mainPerson,
   onSelect,
+  inner,
 }) => {
   const [stack, setStack] = useState<PersonType[]>([mainPerson]);
   const stackRef = useRef<HTMLDivElement>(null);
@@ -96,6 +99,10 @@ const RelationTree: React.FC<RelationTreeProps> = ({
   const lastPerson = stack[stack.length - 1];
 
   const handleClick = (person: PersonType) => {
+    if (inner) {
+      onSelect(person);
+      return;
+    }
     setStack((prev) => [...prev.filter((i) => i.id !== person.id), person]);
     onSelect(person);
     setTimeout(() => {
@@ -109,31 +116,36 @@ const RelationTree: React.FC<RelationTreeProps> = ({
   };
 
   return (
-    <StyledRelationTreeContainer>
-      <div className={style.stackList} ref={stackRef}>
-        {stack.map((p, index) => (
-          <div onClick={() => handleClick(p)} key={p.id + 'stack'}>
-            {p.name}
-            {index > 0 && (
-              <span
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setStack((prev) => {
-                    const copy = Array.from(prev);
-                    copy.splice(index, 1);
-                    return copy;
-                  });
-                }}
-              >
-                x
-              </span>
-            )}
-          </div>
-        ))}
-      </div>
+    <StyledRelationTreeContainer $inner={inner}>
+      {!inner && (
+        <div className={style.stackList} ref={stackRef}>
+          {stack.map((p, index) => (
+            <div onClick={() => handleClick(p)} key={p.id + 'stack'}>
+              {p.name}
+              {index > 0 && (
+                <span
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setStack((prev) => {
+                      const copy = Array.from(prev);
+                      copy.splice(index, 1);
+                      return copy;
+                    });
+                  }}
+                >
+                  x
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
 
       <StyledWrapper>
-        <PersonRelation person={lastPerson} onClick={handleClick} />
+        <PersonRelation
+          person={inner ? mainPerson : lastPerson}
+          onClick={handleClick}
+        />
       </StyledWrapper>
     </StyledRelationTreeContainer>
   );
