@@ -1,32 +1,18 @@
 // reference: https://jwcooney.com/2016/08/21/example-pure-css-family-tree-markup/
 import React, { useContext, useMemo, useState } from 'react';
-import builder from '../../helper/builder';
-import { PersonType, RelationType } from '../../types';
+import { getPersonTreeByDepth } from '../../helper/builder';
+import { PersonTree, PersonType } from '../../types';
 import { AppContext } from '../../app/ctx';
 import Person from './Person';
 import Portal from '../Portal';
 import TreeSizeCalc from './TreeSizeCalc';
 
 type TreeProps = {
-  person: PersonType;
-  personList: PersonType[];
-  relation: RelationType[];
+  person: PersonTree;
   onClick: (person: PersonType) => void;
-  depth: number;
 };
 
-const TreeRecursive: React.FC<TreeProps> = ({
-  person,
-  personList,
-  relation,
-  onClick,
-  depth,
-}) => {
-  const buildedPerson = useMemo(
-    () => builder(person, personList, relation),
-    [person, personList, relation]
-  );
-
+const Tree: React.FC<TreeProps> = ({ person, onClick }) => {
   return (
     <li>
       <div className="tree-wrapper">
@@ -35,7 +21,7 @@ const TreeRecursive: React.FC<TreeProps> = ({
           gender={person.gender}
           onClick={() => onClick(person)}
         />
-        {buildedPerson.partners.map((pr) => (
+        {person.partners.map((pr) => (
           <Person
             personName={pr.name}
             gender={pr.gender}
@@ -45,16 +31,13 @@ const TreeRecursive: React.FC<TreeProps> = ({
           />
         ))}
       </div>
-      {buildedPerson.children.length && depth > 0 ? (
+      {person.children.length ? (
         <ul>
-          {buildedPerson.children.map((child) => (
-            <TreeRecursive
+          {person.children.map((child) => (
+            <Tree
               person={child}
-              personList={personList}
-              relation={relation}
               onClick={onClick}
               key={`${person.id}Child${child.id}`}
-              depth={depth - 1}
             />
           ))}
         </ul>
@@ -72,19 +55,19 @@ const Comp = ({
 }) => {
   const { person: personList, relation, treeDepth } = useContext(AppContext);
 
+  const personTree = useMemo(
+    () => getPersonTreeByDepth(person, treeDepth, personList, relation),
+    [person, personList, relation, treeDepth]
+  );
+
   const [size, setSize] = useState({
     width: 0,
     height: 0,
   });
+
   const el = (
     <ul>
-      <TreeRecursive
-        personList={personList}
-        relation={relation}
-        person={person}
-        onClick={onClick}
-        depth={treeDepth}
-      />
+      <Tree person={personTree} onClick={onClick} />
     </ul>
   );
 

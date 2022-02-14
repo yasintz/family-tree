@@ -1,6 +1,30 @@
-import { PersonType, RelationType } from '../types';
+import { PersonTree, PersonType, RelationType } from '../types';
 
-function builder(person: PersonType, personList: PersonType[], relation: RelationType[]) {
+function getPersonTreeByDepth(
+  p: PersonType,
+  depth: number,
+  personList: PersonType[],
+  relation: RelationType[]
+): PersonTree {
+  const buildedPerson = builder(p, personList, relation);
+
+  return {
+    ...p,
+    partners: buildedPerson.partners,
+    children:
+      depth > 0
+        ? buildedPerson.children.map((c) =>
+            getPersonTreeByDepth(c, depth - 1, personList, relation)
+          )
+        : [],
+  };
+}
+
+function builder(
+  person: PersonType,
+  personList: PersonType[],
+  relation: RelationType[]
+) {
   const getPersonById = (id: string) =>
     personList.find((i) => i.id === id) as PersonType;
   const _getParents = () => {
@@ -44,4 +68,5 @@ function builder(person: PersonType, personList: PersonType[], relation: Relatio
   };
 }
 
+export { getPersonTreeByDepth };
 export default builder;
