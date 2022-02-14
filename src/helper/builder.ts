@@ -1,8 +1,32 @@
-import { Person, Relation } from '../types';
+import { PersonTreeType, PersonType, RelationType } from '../types';
 
-function builder(person: Person, personList: Person[], relation: Relation[]) {
+function getPersonTreeByDepth(
+  p: PersonType,
+  depth: number,
+  personList: PersonType[],
+  relation: RelationType[]
+): PersonTreeType {
+  const buildedPerson = builder(p, personList, relation);
+
+  return {
+    ...p,
+    partners: buildedPerson.partners,
+    children:
+      depth > 0
+        ? buildedPerson.children.map((c) =>
+            getPersonTreeByDepth(c, depth - 1, personList, relation)
+          )
+        : [],
+  };
+}
+
+function builder(
+  person: PersonType,
+  personList: PersonType[],
+  relation: RelationType[]
+) {
   const getPersonById = (id: string) =>
-    personList.find((i) => i.id === id) as Person;
+    personList.find((i) => i.id === id) as PersonType;
   const _getParents = () => {
     return relation
       .filter((r) => r.type === 'parent' && r.second === person.id)
@@ -31,7 +55,7 @@ function builder(person: Person, personList: Person[], relation: Relation[]) {
       .reduce(
         // eslint-disable-next-line
         (acc, cur) => (acc.push(..._getChildrenByParent(cur.id)), acc),
-        [] as Person[]
+        [] as PersonType[]
       )
       .filter((i) => i.id !== person.id)
       .reduce(
@@ -39,9 +63,10 @@ function builder(person: Person, personList: Person[], relation: Relation[]) {
           // eslint-disable-next-line
           acc.findIndex((p) => p.id === cur.id) === -1 && acc.push(cur), acc
         ),
-        [] as Person[]
+        [] as PersonType[]
       ),
   };
 }
 
+export { getPersonTreeByDepth };
 export default builder;

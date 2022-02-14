@@ -1,19 +1,19 @@
 import React, { useContext, useState } from 'react';
 import style from './AddRelation.module.scss';
-import { Person, RelationType } from '../../types';
+import { PersonType, RelationValueType } from '../../types';
 import TypeSelector from '../TypeSelector';
 import { AppContext } from '../ctx';
 import { popupHoc } from '../../components/Popup';
 
 type AddRelationProps = {
-  person?: Person;
+  person?: PersonType;
   onClose: () => void;
 };
 
 type PersonSelectorBoxProps = {
-  person?: Person;
-  setPerson: (p: Person) => void;
-  base: Person;
+  person?: PersonType;
+  setPerson: (p: PersonType) => void;
+  base: PersonType;
 };
 
 const PersonSelectorBox: React.FC<PersonSelectorBoxProps> = ({
@@ -25,7 +25,9 @@ const PersonSelectorBox: React.FC<PersonSelectorBoxProps> = ({
   return (
     <div
       className={style.personSelector}
-      onClick={() => ctx.showPersonSelector({ cb: setPerson, person: base })}
+      onClick={() =>
+        ctx.showPersonSelector({ cb: setPerson, person: person || base })
+      }
     >
       {person?.name || ``}
     </div>
@@ -33,9 +35,9 @@ const PersonSelectorBox: React.FC<PersonSelectorBoxProps> = ({
 };
 
 type LineItem = {
-  type: RelationType;
-  main?: Person;
-  extra?: Person;
+  type: RelationValueType;
+  main?: PersonType;
+  extra?: PersonType;
   id: string;
 };
 
@@ -45,7 +47,7 @@ type LineProps = {
   onChange: OnLinChange;
   line: LineItem;
   onRemove: () => void;
-  base: Person;
+  base: PersonType;
 };
 
 const Line: React.FC<LineProps> = ({
@@ -84,7 +86,7 @@ const Line: React.FC<LineProps> = ({
 };
 
 type PersonRendererProps = {
-  person: Person;
+  person: PersonType;
   onGenerate: (lines: LineItem[]) => void;
 };
 
@@ -157,11 +159,13 @@ const AddRelation: React.FC<AddRelationProps> = ({ person }) => {
 
   const handleGenerate = (lines: LineItem[]) => {
     if (person) {
-      const args = (lines.filter((i) => i.main) as {
-        main: Person;
-        type: RelationType;
-        extra?: Person;
-      }[]).reduce((acc, cur) => {
+      const args = (
+        lines.filter((i) => i.main) as {
+          main: PersonType;
+          type: RelationValueType;
+          extra?: PersonType;
+        }[]
+      ).reduce((acc, cur) => {
         acc.push({
           type: cur.type,
           main: person?.id,
@@ -183,7 +187,7 @@ const AddRelation: React.FC<AddRelationProps> = ({ person }) => {
           }
         }
         return acc;
-      }, [] as { type: RelationType; main: string; second: string }[]);
+      }, [] as { type: RelationValueType; main: string; second: string }[]);
 
       createRelation(...args);
     }

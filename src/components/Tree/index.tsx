@@ -1,164 +1,88 @@
-// reference: https://jwcooney.com/2016/08/21/example-pure-css-family-tree-markup/
-import React, { useContext, useEffect, useMemo, useState } from 'react';
-import ReactDOMServer from 'react-dom/server';
-import builder from '../../helper/builder';
-import { Person, Relation } from '../../types';
-import cx from 'classnames';
-import style from './Tree.module.scss';
-import { AppContext } from '../../app/ctx';
+import React, { useState } from 'react';
+import { PersonTreeType, PersonType } from '../../types';
+import Person from './Person';
+import Portal from '../Portal';
+import TreeSizeCalc from './TreeSizeCalc';
 
-type TreeProps = {
-  person: Person;
-  personList: Person[];
-  relation: Relation[];
-  onClick: (person: Person) => void;
-  depth: number;
+type PersonTreeProps = {
+  person: PersonTreeType;
+  onClick?: (person: PersonType) => void;
+  child?: boolean;
 };
 
-const genderClass = ['m', 'f'];
-
-const PersonRenderer = ({
-  person,
-  className,
-  onClick,
-}: {
-  person: Person;
-  className?: string;
-  onClick: () => void;
-}) => {
-  return (
-    <div
-      onClick={() => onClick()}
-      className={cx(genderClass[person.gender], className)}
-    >
-      {person.name}
-    </div>
-  );
-};
-
-const TreeRecursive: React.FC<TreeProps> = ({
-  person,
-  personList,
-  relation,
-  onClick,
-  depth,
-}) => {
-  const buildedPerson = useMemo(() => builder(person, personList, relation), [
-    person,
-    personList,
-    relation,
-  ]);
-
-  return (
+const PersonTree: React.FC<PersonTreeProps> = ({ person, onClick, child }) => {
+  const content = (
     <li>
-      <div className="w">
-        <PersonRenderer person={person} onClick={() => onClick(person)} />
-        {buildedPerson.partners.map((pr) => (
-          <PersonRenderer
-            person={pr}
-            onClick={() => onClick(pr)}
-            className="pr"
+      <div className="tree-wrapper">
+        <Person
+          personName={person.name}
+          gender={person.gender}
+          onClick={() => onClick?.(person)}
+          highlight={person.highlight}
+        />
+        {person.partners.map((pr) => (
+          <Person
+            personName={pr.name}
+            gender={pr.gender}
+            onClick={() => onClick?.(pr)}
+            className="inactive-partner"
             key={`${person.id}Partner${pr.id}`}
           />
         ))}
       </div>
-      {buildedPerson.children.length && depth > 0 ? (
+      {person.children.length ? (
         <ul>
-          {buildedPerson.children.map((child) => (
-            <TreeRecursive
+          {person.children.map((child) => (
+            <PersonTree
               person={child}
-              personList={personList}
-              relation={relation}
               onClick={onClick}
               key={`${person.id}Child${child.id}`}
-              depth={depth - 1}
+              child
             />
           ))}
         </ul>
       ) : undefined}
     </li>
   );
+
+  if (child) {
+    return content;
+  }
+
+  return <ul>{content}</ul>;
 };
 
-const Comp = ({
-  person,
-  onClick,
-}: {
-  person: Person;
-  onClick: (person: Person) => void;
-}) => {
-  const { person: personList, relation, treeDepth } = useContext(AppContext);
+type TreeProps = {
+  person: PersonTreeType;
+  onClick?: (person: PersonType) => void;
+};
 
-  // const builded = useMemo(() => builder(person, personList, relation), [
-  //   person,
-  //   personList,
-  //   relation,
-  // ]);
-  // const { parents } = builded;
-
-  // const anyParent = parents[0];
-
+const Tree: React.FC<TreeProps> = ({ person, onClick }) => {
   const [size, setSize] = useState({
     width: 0,
     height: 0,
   });
-  const el = (
-    <ul>
-      <TreeRecursive
-        personList={personList}
-        relation={relation}
-        person={person}
-        onClick={onClick}
-        depth={treeDepth}
-      />
-    </ul>
-  );
 
-  useEffect(() => {
-    const element = (
-      <div>
-        <ul>
-          <li>
-            <div className="w">
-              <div className="f">Parent</div>
-            </div>
-            {el}
-          </li>
-        </ul>
-      </div>
-    );
-
-    const str = ReactDOMServer.renderToString(element);
-    const domItem = document.createElement('div');
-    domItem.classList.add(style.sizeWrapper, 'tree');
-    domItem.innerHTML = str;
-    document.body.appendChild(domItem);
-
-    const div = domItem.children[0];
-
-    const ul = div.children[0];
-    const li = ul.children[0];
-
-    const width = div.clientWidth + 50;
-    const height = li.clientHeight + 50;
-
-    setSize({ width, height });
-
-    document.body.removeChild(domItem);
-    // eslint-disable-next-line
-  }, [person, personList, relation, treeDepth]);
+  const el = <PersonTree person={person} onClick={onClick} />;
 
   return (
-    <div
-      className="tree"
-      style={{
-        minWidth: size.width,
-        minHeight: size.height,
-      }}
-    >
-      {el}
-    </div>
+    <>
+      <div
+        className="tree"
+        style={{
+          minWidth: size.width,
+          minHeight: size.height,
+        }}
+      >
+        {el}
+      </div>
+      <Portal>
+        <TreeSizeCalc deps={[person]} setSize={setSize}>
+          {el}
+        </TreeSizeCalc>
+      </Portal>
+    </>
   );
 };
 
-export default Comp;
+export default Tree;

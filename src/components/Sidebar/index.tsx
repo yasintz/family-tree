@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Person } from '../../types';
+import { PersonType } from '../../types';
 import style from './Sidebar.module.scss';
 import SideItem from './SideItem';
 
 type SidebarProps = {
-  person: Person[];
-  onClick: (person: Person) => void;
+  person: PersonType[];
+  onClick: (person: PersonType) => void;
   onCreatePersonClick: () => void;
 };
 
