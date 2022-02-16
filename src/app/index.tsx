@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import Popup from '../components/Popup';
 import Sidebar from '../components/Sidebar';
 import Tree from '../components/Tree';
@@ -9,10 +9,33 @@ import style from './app.module.scss';
 import CreatePerson from './CreatePerson';
 import { AppContext } from './ctx';
 import useData from './data';
+import { getPersonTreeByDepth } from '../helper/builder';
+import styled from 'styled-components';
+import RelationTree from './RelationTree';
+
+const StyledTreeContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+const StyledDepthInputContainer = styled.label`
+  margin: 12px;
+`;
 
 type AppProps = {};
 
+enum PageMode {
+  Relation,
+  Tree,
+  Detail,
+  UpdatePerson,
+}
+
 const App: React.FC<AppProps> = () => {
+  const [mode, setMode] = useState<PageMode>(PageMode.Tree);
+  const [mainPerson, setMainPerson] = useState<PersonType>();
+  const [isOldRelation, setIsOldRelation] = useState(false);
+
   const [personForRelation, setPersonForRelation] = useState<PersonType>();
   const [personForUpdate, setPersonForUpdate] = useState<PersonType>();
   const [showCreatePersonPopup, setShowCreatePersonPopup] = useState(false);
@@ -26,6 +49,14 @@ const App: React.FC<AppProps> = () => {
     cb?: (v: PersonType) => void;
     person?: PersonType;
   }>();
+
+  const personTree = useMemo(
+    () =>
+      personForTree
+        ? getPersonTreeByDepth(personForTree, treeDepth, person, relation)
+        : null,
+    [person, personForTree, relation, treeDepth]
+  );
 
   const actions = [
     {
@@ -50,6 +81,12 @@ const App: React.FC<AppProps> = () => {
         setPersonForTree(undefined);
       },
     },
+    {
+      text: `Old Relation Mode: ${isOldRelation ? 'on' : 'off'}`,
+      handler: () => {
+        setIsOldRelation((prev) => !prev);
+      },
+    },
   ];
 
   return (
@@ -69,14 +106,6 @@ const App: React.FC<AppProps> = () => {
     >
       <div className={style.container}>
         <div className={style.sidebar}>
-          <label>
-            Depth:
-            <input
-              type="number"
-              value={treeDepth.toString()}
-              onChange={(e) => setTreeDepth(parseInt(e.target.value))}
-            />
-          </label>
           <Sidebar
             person={person}
             onClick={(person) => {
@@ -103,20 +132,42 @@ const App: React.FC<AppProps> = () => {
             </>
           )}
         </div>
-        <div className={style.treeContainer}>
-          {personForDetail && (
-            <div className={style.relationDetail}>
-              <RelationFinder
+        {personForDetail && (
+          <div className={style.treeContainer}>
+            {isOldRelation ? (
+              <div className={style.relationDetail}>
+                <RelationFinder
+                  mainPerson={personForDetail}
+                  onSelect={setPersonForAction}
+                  renderAllPerson={false}
+                  isOldRelation
+                />
+              </div>
+            ) : (
+              <RelationTree
                 mainPerson={personForDetail}
-                onSelect={setPersonForAction}
-                renderAllPerson={false}
+                onSelect={setPersonForDetail}
               />
+            )}
+          </div>
+        )}
+
+        {!personForDetail && personTree && (
+          <StyledTreeContainer>
+            <StyledDepthInputContainer>
+              Depth:
+              <input
+                type="number"
+                value={treeDepth.toString()}
+                onChange={(e) => setTreeDepth(parseInt(e.target.value))}
+              />
+            </StyledDepthInputContainer>
+
+            <div className={style.treeContainer}>
+              <Tree person={personTree} onClick={setPersonForAction} />
             </div>
-          )}
-          {!personForDetail && personForTree && (
-            <Tree person={personForTree} onClick={setPersonForAction} />
-          )}
-        </div>
+          </StyledTreeContainer>
+        )}
       </div>
       <AddRelation
         person={personForRelation}
@@ -153,6 +204,7 @@ const App: React.FC<AppProps> = () => {
             mainPerson={personSelector?.person}
             onSelect={personSelector?.cb}
             renderAllPerson
+            isOldRelation={isOldRelation}
           />
         </div>
       </Popup>

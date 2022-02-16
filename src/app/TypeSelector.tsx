@@ -1,15 +1,15 @@
 import React from 'react';
-import { RelationType } from '../types';
+import { RelationValueType } from '../types';
 
 type TypeSelectorProps = {
-  onChange: (v: RelationType) => void;
-  val: RelationType;
+  onChange: (v: RelationValueType) => void;
+  val: RelationValueType;
 };
 
 const TypeSelector: React.FC<TypeSelectorProps> = ({ onChange, val }) => {
   return (
     <select
-      onChange={(e) => onChange(e.target.value as RelationType)}
+      onChange={(e) => onChange(e.target.value as RelationValueType)}
       value={val}
     >
       <option value="partner">Partner</option>
