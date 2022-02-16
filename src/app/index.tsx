@@ -24,16 +24,16 @@ const StyledDepthInputContainer = styled.label`
 
 type AppProps = {};
 
-enum PageMode {
-  Relation,
-  Tree,
-  Detail,
-  UpdatePerson,
-}
+// enum PageMode {
+//   Relation,
+//   Tree,
+//   Detail,
+//   UpdatePerson,
+// }
 
 const App: React.FC<AppProps> = () => {
-  const [mode, setMode] = useState<PageMode>(PageMode.Tree);
-  const [mainPerson, setMainPerson] = useState<PersonType>();
+  // const [mode, setMode] = useState<PageMode>(PageMode.Tree);
+  // const [mainPerson, setMainPerson] = useState<PersonType>();
   const [isOldRelation, setIsOldRelation] = useState(false);
 
   const [personForRelation, setPersonForRelation] = useState<PersonType>();
