@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Gender, PersonType, RelationType, RelationValueType, StoreType } from '../types';
-import throttle from 'lodash.throttle';
+import throttle from 'lodash/throttle';
 const uid = () => Math.random().toString(36).substr(2);
 
 const db = {
