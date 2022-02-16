@@ -122,20 +122,18 @@ const RelationTree: React.FC<RelationTreeProps> = ({
           {stack.map((p, index) => (
             <div onClick={() => handleClick(p)} key={p.id + 'stack'}>
               {p.name}
-              {index > 0 && (
-                <span
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setStack((prev) => {
-                      const copy = Array.from(prev);
-                      copy.splice(index, 1);
-                      return copy;
-                    });
-                  }}
-                >
-                  x
-                </span>
-              )}
+              <span
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setStack((prev) => {
+                    const copy = Array.from(prev);
+                    copy.splice(index, 1);
+                    return copy;
+                  });
+                }}
+              >
+                x
+              </span>
             </div>
           ))}
         </div>

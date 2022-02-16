@@ -146,7 +146,7 @@ const App: React.FC<AppProps> = () => {
             ) : (
               <RelationTree
                 mainPerson={personForDetail}
-                onSelect={setPersonForDetail}
+                onSelect={setPersonForAction}
               />
             )}
           </div>
