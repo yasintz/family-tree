@@ -24,27 +24,34 @@ const StyledDepthInputContainer = styled.label`
 
 type AppProps = {};
 
-// enum PageMode {
-//   Relation,
-//   Tree,
-//   Detail,
-//   UpdatePerson,
-// }
+enum PageMode {
+  Unknown,
+  Tree,
+  Detail,
+  // Relation,
+  // UpdatePerson,
+}
 
 const App: React.FC<AppProps> = () => {
-  // const [mode, setMode] = useState<PageMode>(PageMode.Tree);
-  // const [mainPerson, setMainPerson] = useState<PersonType>();
+  const [person, setPerson] = useState<PersonType>();
+  const [mode, setMode] = useState<PageMode>(PageMode.Tree);
+
   const [isOldRelation, setIsOldRelation] = useState(false);
 
   const [personForRelation, setPersonForRelation] = useState<PersonType>();
   const [personForUpdate, setPersonForUpdate] = useState<PersonType>();
   const [showCreatePersonPopup, setShowCreatePersonPopup] = useState(false);
-  const [personForTree, setPersonForTree] = useState<PersonType>();
   const [personForAction, setPersonForAction] = useState<PersonType>();
   const [personForDetail, setPersonForDetail] = useState<PersonType>();
   const [treeDepth, setTreeDepth] = useState<number>(3);
-  const { relation, person, createPerson, createRelation, updatePerson } =
-    useData();
+
+  const {
+    relation,
+    person: personList,
+    createPerson,
+    createRelation,
+    updatePerson,
+  } = useData();
   const [personSelector, setPersonSelector] = useState<{
     cb?: (v: PersonType) => void;
     person?: PersonType;
@@ -52,10 +59,10 @@ const App: React.FC<AppProps> = () => {
 
   const personTree = useMemo(
     () =>
-      personForTree
-        ? getPersonTreeByDepth(personForTree, treeDepth, person, relation)
+      person && mode === PageMode.Tree
+        ? getPersonTreeByDepth(person, treeDepth, personList, relation)
         : null,
-    [person, personForTree, relation, treeDepth]
+    [mode, person, personList, relation, treeDepth]
   );
 
   const actions = [
@@ -63,12 +70,14 @@ const App: React.FC<AppProps> = () => {
       text: 'Open',
       handler: () => {
         setPersonForDetail(undefined);
-        setPersonForTree(personForAction);
+        setMode(PageMode.Tree);
       },
     },
     {
       text: 'Relation',
-      handler: () => setPersonForRelation(personForAction),
+      handler: () => {
+        setPersonForRelation(personForAction);
+      },
     },
     {
       text: 'Edit',
@@ -78,7 +87,7 @@ const App: React.FC<AppProps> = () => {
       text: 'Detail',
       handler: () => {
         setPersonForDetail(personForAction);
-        setPersonForTree(undefined);
+        setMode(PageMode.Detail);
       },
     },
     {
@@ -93,26 +102,23 @@ const App: React.FC<AppProps> = () => {
     <AppContext.Provider
       value={{
         relation,
-        person,
+        person: personList,
         createPerson,
         createRelation,
         showRelationModal: setPersonForRelation,
         updatePerson,
         showCreatePersonModal: () => setShowCreatePersonPopup(true),
         showPersonSelector: setPersonSelector,
-        setPersonForTree,
         treeDepth,
       }}
     >
       <div className={style.container}>
         <div className={style.sidebar}>
           <Sidebar
-            person={person}
+            person={personList}
             onClick={(person) => {
               setPersonForAction(person);
-              if (!personForTree) {
-                setPersonForDetail(person);
-              }
+              setPerson(person);
             }}
             onCreatePersonClick={() => setShowCreatePersonPopup(true)}
           />

@@ -116,7 +116,7 @@ const RelationTree: React.FC<RelationTreeProps> = ({
   };
 
   useEffect(() => {
-    handleClick(mainPerson);
+    setStack([mainPerson]);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mainPerson.id]);
