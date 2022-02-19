@@ -35,10 +35,10 @@ enum PageMode {
 const App: React.FC<AppProps> = () => {
   const [person, setPerson] = useState<PersonType>();
   const [mode, setMode] = useState<PageMode>(PageMode.Tree);
+  const [showRelationModal, setShowRelationModal] = useState(false);
 
   const [isOldRelation, setIsOldRelation] = useState(false);
 
-  const [personForRelation, setPersonForRelation] = useState<PersonType>();
   const [personForUpdate, setPersonForUpdate] = useState<PersonType>();
   const [showCreatePersonPopup, setShowCreatePersonPopup] = useState(false);
   const [personForAction, setPersonForAction] = useState<PersonType>();
@@ -75,9 +75,7 @@ const App: React.FC<AppProps> = () => {
     },
     {
       text: 'Relation',
-      handler: () => {
-        setPersonForRelation(personForAction);
-      },
+      handler: () => setShowRelationModal(true),
     },
     {
       text: 'Edit',
@@ -105,7 +103,6 @@ const App: React.FC<AppProps> = () => {
         person: personList,
         createPerson,
         createRelation,
-        showRelationModal: setPersonForRelation,
         updatePerson,
         showCreatePersonModal: () => setShowCreatePersonPopup(true),
         showPersonSelector: setPersonSelector,
@@ -176,8 +173,8 @@ const App: React.FC<AppProps> = () => {
         )}
       </div>
       <AddRelation
-        person={personForRelation}
-        onClose={() => setPersonForRelation(undefined)}
+        person={showRelationModal ? person : undefined}
+        onClose={() => setShowRelationModal(false)}
       />
       <Popup
         open={showCreatePersonPopup || !!personForUpdate}

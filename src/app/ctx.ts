@@ -3,7 +3,6 @@ import { PersonType } from '../types';
 import useData from './data';
 
 type ContextType = ReturnType<typeof useData> & {
-  showRelationModal: (person: PersonType) => void;
   showCreatePersonModal: () => void;
   showPersonSelector: (v: {
     cb?: (person: PersonType) => void;
@@ -17,7 +16,6 @@ export const AppContext = React.createContext<ContextType>({
   createRelation: () => 0,
   person: [],
   relation: [],
-  showRelationModal: () => 0,
   showCreatePersonModal: () => 0,
   updatePerson: () => 0,
   showPersonSelector: () => 0,
