@@ -6,12 +6,12 @@ import { PersonType } from '../types';
 import AddRelation from './AddRelation/index';
 import RelationFinder from './RelationDetail';
 import style from './app.module.scss';
-import CreatePerson from './CreatePerson';
 import { AppContext } from './ctx';
 import useData from './data';
 import { getPersonTreeByDepth } from '../helper/builder';
 import styled from 'styled-components';
 import RelationTree from './RelationTree';
+import CreateUpdateModal from './CreateUpdateModal';
 
 const StyledTreeContainer = styled.div`
   display: flex;
@@ -25,11 +25,8 @@ const StyledDepthInputContainer = styled.label`
 type AppProps = {};
 
 enum PageMode {
-  Unknown,
   Tree,
   Detail,
-  // Relation,
-  // UpdatePerson,
 }
 
 const App: React.FC<AppProps> = () => {
@@ -38,12 +35,12 @@ const App: React.FC<AppProps> = () => {
   const [showRelationModal, setShowRelationModal] = useState(false);
 
   const [isOldRelation, setIsOldRelation] = useState(false);
+  const [treeDepth, setTreeDepth] = useState<number>(3);
 
-  const [personForUpdate, setPersonForUpdate] = useState<PersonType>();
   const [showCreatePersonPopup, setShowCreatePersonPopup] = useState(false);
+  const [showEditPersonPopup, setShowEditPersonPopup] = useState(false);
   const [personForAction, setPersonForAction] = useState<PersonType>();
   const [personForDetail, setPersonForDetail] = useState<PersonType>();
-  const [treeDepth, setTreeDepth] = useState<number>(3);
 
   const {
     relation,
@@ -79,7 +76,7 @@ const App: React.FC<AppProps> = () => {
     },
     {
       text: 'Edit',
-      handler: () => setPersonForUpdate(personForAction),
+      handler: () => setShowEditPersonPopup(Boolean(person)),
     },
     {
       text: 'Detail',
@@ -176,28 +173,18 @@ const App: React.FC<AppProps> = () => {
         person={showRelationModal ? person : undefined}
         onClose={() => setShowRelationModal(false)}
       />
-      <Popup
-        open={showCreatePersonPopup || !!personForUpdate}
-        onClose={() => {
-          setShowCreatePersonPopup(false);
-          setPersonForUpdate(undefined);
+      <CreateUpdateModal
+        create={{
+          show: showCreatePersonPopup,
+          setShow: setShowCreatePersonPopup,
+          action: ({ name, gender }) => createPerson(name, gender),
         }}
-      >
-        <CreatePerson
-          onSubmit={(name, gender) => {
-            if (showCreatePersonPopup) {
-              createPerson(name, gender);
-            } else if (personForUpdate) {
-              updatePerson(personForUpdate.id, { name, gender });
-            }
-
-            setShowCreatePersonPopup(false);
-            setPersonForUpdate(undefined);
-          }}
-          name={personForUpdate?.name}
-          gender={personForUpdate?.gender}
-        />
-      </Popup>
+        update={{
+          show: showEditPersonPopup,
+          setShow: setShowEditPersonPopup,
+          action: ({ id, name, gender }) => updatePerson(id, { name, gender }),
+        }}
+      />
       <Popup
         open={!!personSelector}
         onClose={() => setPersonSelector(undefined)}
