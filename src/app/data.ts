@@ -1,16 +1,23 @@
 import { useEffect, useState } from 'react';
-import { Gender, PersonType, RelationType, RelationValueType, StoreType } from '../types';
+import {
+  Gender,
+  PersonType,
+  RelationType,
+  RelationValueType,
+  StoreType,
+} from '../types';
 import throttle from 'lodash/throttle';
 const uid = () => Math.random().toString(36).substr(2);
 
+const params = new URLSearchParams(window.location.search);
+const url =
+  params.get('api') || 'https://api.npoint.io/ae8995c6924d92c556f8';
+
 const db = {
-  get: () =>
-    fetch('https://api.npoint.io/ae8995c6924d92c556f8').then(
-      (i) => i.json() as Promise<StoreType>
-    ),
+  get: () => fetch(url).then((i) => i.json() as Promise<StoreType>),
   set: throttle(
     (store: StoreType) =>
-      fetch('https://api.npoint.io/ae8995c6924d92c556f8', {
+      fetch(url, {
         method: 'post',
         headers: {
           Accept: 'application/json, text/plain, */*',
@@ -61,7 +68,11 @@ function useData() {
 
       return arrayCopy;
     });
-  type RelationParam = { type: RelationValueType; main: string; second: string };
+  type RelationParam = {
+    type: RelationValueType;
+    main: string;
+    second: string;
+  };
 
   const handleRelation = ({ main, second, type }: RelationParam) => {
     const d: RelationType = {

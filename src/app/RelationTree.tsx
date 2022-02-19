@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useRef, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import Tree from '../components/Tree';
 import builder from '../helper/builder';
@@ -114,6 +114,12 @@ const RelationTree: React.FC<RelationTreeProps> = ({
       }
     });
   };
+
+  useEffect(() => {
+    handleClick(mainPerson);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mainPerson.id]);
 
   return (
     <StyledRelationTreeContainer $inner={inner}>
