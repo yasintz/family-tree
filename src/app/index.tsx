@@ -39,8 +39,6 @@ const App: React.FC<AppProps> = () => {
 
   const [showCreatePersonPopup, setShowCreatePersonPopup] = useState(false);
   const [showEditPersonPopup, setShowEditPersonPopup] = useState(false);
-  const [personForAction, setPersonForAction] = useState<PersonType>();
-  const [personForDetail, setPersonForDetail] = useState<PersonType>();
 
   const {
     relation,
@@ -64,11 +62,12 @@ const App: React.FC<AppProps> = () => {
 
   const actions = [
     {
-      text: 'Open',
-      handler: () => {
-        setPersonForDetail(undefined);
-        setMode(PageMode.Tree);
-      },
+      text: 'Tree',
+      handler: () => setMode(PageMode.Tree),
+    },
+    {
+      text: 'Detail',
+      handler: () => setMode(PageMode.Detail),
     },
     {
       text: 'Relation',
@@ -77,13 +76,6 @@ const App: React.FC<AppProps> = () => {
     {
       text: 'Edit',
       handler: () => setShowEditPersonPopup(Boolean(person)),
-    },
-    {
-      text: 'Detail',
-      handler: () => {
-        setPersonForDetail(personForAction);
-        setMode(PageMode.Detail);
-      },
     },
     {
       text: `Old Relation Mode: ${isOldRelation ? 'on' : 'off'}`,
@@ -110,17 +102,14 @@ const App: React.FC<AppProps> = () => {
         <div className={style.sidebar}>
           <Sidebar
             person={personList}
-            onClick={(person) => {
-              setPersonForAction(person);
-              setPerson(person);
-            }}
+            onClick={setPerson}
             onCreatePersonClick={() => setShowCreatePersonPopup(true)}
           />
         </div>
         <div className={style.actionSidebar}>
-          {personForAction && (
+          {person && (
             <>
-              <h5>{personForAction.name}</h5>
+              <h5>{person.name}</h5>
 
               <div>
                 {actions.map((n) => (
@@ -132,27 +121,24 @@ const App: React.FC<AppProps> = () => {
             </>
           )}
         </div>
-        {personForDetail && (
+        {person && mode === PageMode.Detail && (
           <div className={style.treeContainer}>
             {isOldRelation ? (
               <div className={style.relationDetail}>
                 <RelationFinder
-                  mainPerson={personForDetail}
-                  onSelect={setPersonForAction}
+                  mainPerson={person}
+                  onSelect={setPerson}
                   renderAllPerson={false}
                   isOldRelation
                 />
               </div>
             ) : (
-              <RelationTree
-                mainPerson={personForDetail}
-                onSelect={setPersonForAction}
-              />
+              <RelationTree mainPerson={person} onSelect={setPerson} />
             )}
           </div>
         )}
 
-        {!personForDetail && personTree && (
+        {mode === PageMode.Tree && personTree && (
           <StyledTreeContainer>
             <StyledDepthInputContainer>
               Depth:
@@ -164,7 +150,7 @@ const App: React.FC<AppProps> = () => {
             </StyledDepthInputContainer>
 
             <div className={style.treeContainer}>
-              <Tree person={personTree} onClick={setPersonForAction} />
+              <Tree person={personTree} onClick={setPerson} />
             </div>
           </StyledTreeContainer>
         )}
@@ -174,6 +160,7 @@ const App: React.FC<AppProps> = () => {
         onClose={() => setShowRelationModal(false)}
       />
       <CreateUpdateModal
+        person={person}
         create={{
           show: showCreatePersonPopup,
           setShow: setShowCreatePersonPopup,

@@ -116,10 +116,10 @@ const RelationTree: React.FC<RelationTreeProps> = ({
   };
 
   useEffect(() => {
-    setStack([mainPerson]);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mainPerson.id]);
+    if (lastPerson.id !== mainPerson.id) {
+      setStack([mainPerson]);
+    }
+  }, [lastPerson.id, mainPerson]);
 
   return (
     <StyledRelationTreeContainer $inner={inner}>
