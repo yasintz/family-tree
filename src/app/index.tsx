@@ -8,7 +8,7 @@ import RelationFinder from './RelationDetail';
 import style from './app.module.scss';
 import { AppContext } from './ctx';
 import useData from './data';
-import { getPersonTreeByDepth } from '../helper/builder';
+import builder, { getPersonTreeByDepth } from '../helper/builder';
 import styled from 'styled-components';
 import RelationTree from './RelationTree';
 import CreateUpdateModal from './CreateUpdateModal';
@@ -40,6 +40,8 @@ const App: React.FC<AppProps> = () => {
   const [showCreatePersonPopup, setShowCreatePersonPopup] = useState(false);
   const [showEditPersonPopup, setShowEditPersonPopup] = useState(false);
 
+  const [showParentlessNodes, setShowParentlessNodes] = useState(false);
+
   const {
     relation,
     person: personList,
@@ -52,12 +54,20 @@ const App: React.FC<AppProps> = () => {
     person?: PersonType;
   }>();
 
-  const personTree = useMemo(
+  const personTree = useMemo(() => {
+    if (!person || mode !== PageMode.Tree) {
+      return null;
+    }
+
+    return getPersonTreeByDepth(person, treeDepth, personList, relation);
+  }, [mode, person, personList, relation, treeDepth]);
+
+  const parentlessNodes = useMemo(
     () =>
-      person && mode === PageMode.Tree
-        ? getPersonTreeByDepth(person, treeDepth, personList, relation)
-        : null,
-    [mode, person, personList, relation, treeDepth]
+      personList.filter(
+        (person) => builder(person, personList, relation).parents.length === 0
+      ),
+    [personList, relation]
   );
 
   const actions = [
@@ -79,9 +89,11 @@ const App: React.FC<AppProps> = () => {
     },
     {
       text: `Old Relation Mode: ${isOldRelation ? 'on' : 'off'}`,
-      handler: () => {
-        setIsOldRelation((prev) => !prev);
-      },
+      handler: () => setIsOldRelation((prev) => !prev),
+    },
+    {
+      text: `Parentless: ${showParentlessNodes ? 'on' : 'off'}`,
+      handler: () => setShowParentlessNodes((prev) => !prev),
     },
   ];
 
@@ -121,6 +133,20 @@ const App: React.FC<AppProps> = () => {
             </>
           )}
         </div>
+        {showParentlessNodes && (
+          <div className={style.parentless}>
+            <div>
+              {parentlessNodes.concat(parentlessNodes).map((node) => (
+                <div
+                  onClick={() => setPerson(node)}
+                  className={node.gender ? style.woman : style.man}
+                >
+                  {node.name}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         {person && mode === PageMode.Detail && (
           <div className={style.treeContainer}>
             {isOldRelation ? (

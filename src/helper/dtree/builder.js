@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import * as d3 from 'd3';
+import d3 from './d3';
 
 class TreeBuilder {
   constructor(root, siblings, opts) {

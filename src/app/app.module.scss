@@ -5,7 +5,7 @@
 }
 
 .sidebar {
-  width: 150px;
+  width: 135px;
   border-right: 1px solid #ddd;
   box-sizing: border-box;
   & > label {
@@ -43,8 +43,36 @@
   transform: scale(var(--scaleRate));
 }
 
+.parentless {
+  width: 140px;
+  & > div {
+    height: 100vh;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    & > div {
+      cursor: pointer;
+      padding: 4px;
+      &.man {
+        background-color: lightblue;
+      }
+      &.woman {
+        background-color: lightpink;
+      }
+      &:first-child {
+        margin-top: 12px;
+      }
+      &:last-child {
+        margin-bottom: 12px;
+      }
+      border-bottom: 1px solid #ddd;
+      margin-bottom: 8px;
+    }
+  }
+}
+
 .actionSidebar {
-  width: 100px;
+  width: 120px;
   border-right: 1px solid #ddd;
   box-sizing: border-box;
   h5 {

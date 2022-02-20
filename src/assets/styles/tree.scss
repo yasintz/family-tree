@@ -85,6 +85,7 @@
           transition: all 0.3s ease-in-out;
           -webkit-border-radius: 5px;
           -moz-border-radius: 5px;
+          user-select: none;
         }
 
         .inactive-partner {

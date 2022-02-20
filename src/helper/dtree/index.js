@@ -1,6 +1,6 @@
 import TreeBuilder from './builder.js';
 import _ from 'lodash';
-import * as d3 from 'd3';
+import d3 from './d3';
 
 const dTree = {
   VERSION: '/* @echo DTREE_VERSION */',
