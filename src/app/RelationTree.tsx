@@ -96,7 +96,9 @@ const RelationTree: React.FC<RelationTreeProps> = ({
   const [stack, setStack] = useState<PersonType[]>([mainPerson]);
   const stackRef = useRef<HTMLDivElement>(null);
 
-  const lastPerson = stack[stack.length - 1];
+  const lastPerson = stack[stack.length - 1] as undefined | PersonType;
+
+  const renderPerson = inner ? mainPerson : lastPerson;
 
   const handleClick = (person: PersonType) => {
     if (inner) {
@@ -116,10 +118,10 @@ const RelationTree: React.FC<RelationTreeProps> = ({
   };
 
   useEffect(() => {
-    if (lastPerson.id !== mainPerson.id) {
+    if (lastPerson?.id !== mainPerson.id) {
       setStack([mainPerson]);
     }
-  }, [lastPerson.id, mainPerson]);
+  }, [lastPerson, mainPerson]);
 
   return (
     <StyledRelationTreeContainer $inner={inner}>
@@ -136,6 +138,8 @@ const RelationTree: React.FC<RelationTreeProps> = ({
                     copy.splice(index, 1);
                     return copy;
                   });
+
+                  onSelect(stack[stack.length - 2]);
                 }}
               >
                 x
@@ -145,12 +149,11 @@ const RelationTree: React.FC<RelationTreeProps> = ({
         </div>
       )}
 
-      <StyledWrapper>
-        <PersonRelation
-          person={inner ? mainPerson : lastPerson}
-          onClick={handleClick}
-        />
-      </StyledWrapper>
+      {renderPerson && (
+        <StyledWrapper>
+          <PersonRelation person={renderPerson} onClick={handleClick} />
+        </StyledWrapper>
+      )}
     </StyledRelationTreeContainer>
   );
 };
