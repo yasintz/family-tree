@@ -136,8 +136,9 @@ const App: React.FC<AppProps> = () => {
         {showParentlessNodes && (
           <div className={style.parentless}>
             <div>
-              {parentlessNodes.concat(parentlessNodes).map((node) => (
+              {parentlessNodes.map((node) => (
                 <div
+                  key={`parentless_${node.id}`}
                   onClick={() => setPerson(node)}
                   className={node.gender ? style.woman : style.man}
                 >
