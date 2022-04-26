@@ -1,1 +1,2 @@
 - [ ] Add link to nodes
+- [ ] Remove person from parentless section
