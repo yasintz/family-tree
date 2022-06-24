@@ -1,11 +1,7 @@
 name: Create Backup Manual
 on:
   workflow_dispatch:
-    inputs:
-       mandatory:
-         description: "Ignore"
-         required: false
-         default: "false"
+
 jobs:
   backup:
     runs-on: ubuntu-latest
