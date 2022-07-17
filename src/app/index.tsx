@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Popup from '../components/Popup';
 import Sidebar from '../components/Sidebar';
 import Tree from '../components/Tree';
@@ -12,6 +12,7 @@ import builder, { getPersonTreeByDepth } from '../helper/builder';
 import styled from 'styled-components';
 import RelationTree from './RelationTree';
 import CreateUpdateModal from './CreateUpdateModal';
+import { usePersonIdStateFromUrl } from '../hooks/use-person-id-state-from-url';
 
 const StyledTreeContainer = styled.div`
   display: flex;
@@ -31,6 +32,7 @@ enum PageMode {
 
 const App: React.FC<AppProps> = () => {
   const [person, setPerson] = useState<PersonType>();
+  const [personId, setPersonId] = usePersonIdStateFromUrl();
   const [mode, setMode] = useState<PageMode>(PageMode.Tree);
   const [showRelationModal, setShowRelationModal] = useState(false);
 
@@ -96,6 +98,22 @@ const App: React.FC<AppProps> = () => {
       handler: () => setShowParentlessNodes((prev) => !prev),
     },
   ];
+
+  useEffect(() => {
+    if (person?.id) {
+      const url = new URL(window.location.href);
+
+      url.searchParams.delete('user');
+      url.searchParams.append('user', person.id);
+
+      const newUrl = url.toString();
+      window.history.pushState({ path: newUrl }, '', newUrl);
+    }
+  }, [person?.id]);
+
+  // const url = new URL(window.location.href);
+
+  // url.searchParams.delete('user');
 
   return (
     <AppContext.Provider

@@ -7,11 +7,11 @@ import {
   StoreType,
 } from '../types';
 import throttle from 'lodash/throttle';
+import turkishToEnglish from '../helper/tr-to-eng';
 const uid = () => Math.random().toString(36).substr(2);
 
 const params = new URLSearchParams(window.location.search);
-const url =
-  params.get('api') || 'https://api.npoint.io/ae8995c6924d92c556f8';
+const url = params.get('api') || 'https://api.npoint.io/ae8995c6924d92c556f8';
 
 const db = {
   get: () => fetch(url).then((i) => i.json() as Promise<StoreType>),
@@ -40,7 +40,7 @@ function useData() {
     const newPerson = {
       name,
       gender,
-      id: `${name.split(' ').join('')}_${gender}_${uid()}`,
+      id: `${turkishToEnglish(name.split(' ').join(''))}_${gender}_${uid()}`,
     };
 
     setPerson((prev) => [newPerson, ...prev]);
