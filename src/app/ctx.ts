@@ -1,5 +1,5 @@
 import React from 'react';
-import { PersonType } from '../types';
+import { MetadataType, PersonType } from '../types';
 import useData from './data';
 
 type ContextType = ReturnType<typeof useData> & {
@@ -20,4 +20,9 @@ export const AppContext = React.createContext<ContextType>({
   updatePerson: () => 0,
   showPersonSelector: () => 0,
   treeDepth: 3,
+  metadata: [],
+  createMetadata: () => ({} as MetadataType),
+  updateMetadata: () => 0,
+  deletePerson: () => 0,
+  store: {} as any,
 });

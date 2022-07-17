@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import style from './AddRelation.module.scss';
 import { PersonType, RelationValueType } from '../../types';
-import TypeSelector from '../TypeSelector';
+import TypeSelector, { typeConfig } from '../TypeSelector';
 import { AppContext } from '../ctx';
 import { popupHoc } from '../../components/Popup';
 
@@ -56,8 +56,8 @@ const Line: React.FC<LineProps> = ({
   line: { type, main, extra },
   base,
 }) => {
-  const isPartner = type === 'partner';
-  const hasExtra = !isPartner;
+  const { adjunct } = typeConfig[type];
+  const hasExtra = adjunct === 'of';
 
   function cb<T extends keyof LineItem>(name: T) {
     return (val: LineItem[T]) => onChange({ [name]: val });
@@ -66,8 +66,7 @@ const Line: React.FC<LineProps> = ({
   return (
     <div>
       <span>{base.name}</span>
-      <TypeSelector val={type} onChange={cb('type')} />{' '}
-      {isPartner ? 'with ' : 'of '}
+      <TypeSelector val={type} onChange={cb('type')} /> {adjunct}
       <PersonSelectorBox base={base} person={main} setPerson={cb('main')} />
       {hasExtra && (
         <>

@@ -13,6 +13,7 @@ import styled from 'styled-components';
 import RelationTree from './RelationTree';
 import CreateUpdateModal from './CreateUpdateModal';
 import { usePersonIdStateFromUrl } from '../hooks/use-person-id-state-from-url';
+import { MetadataPopup } from './MetadataPopup';
 
 const StyledTreeContainer = styled.div`
   display: flex;
@@ -23,15 +24,21 @@ const StyledDepthInputContainer = styled.label`
   margin: 12px;
 `;
 
-type AppProps = {};
+const StyledActionButton = styled.button<{ $highlight?: boolean }>`
+  ${(props) =>
+    props.$highlight &&
+    `
+      box-shadow: inset 0 0 0 1px black;
+      border-color: black;
+    `}
+`;
 
 enum PageMode {
   Tree,
   Detail,
 }
 
-const App: React.FC<AppProps> = () => {
-  const [person, setPerson] = useState<PersonType>();
+const App: React.FC = () => {
   const [personId, setPersonId] = usePersonIdStateFromUrl();
   const [mode, setMode] = useState<PageMode>(PageMode.Tree);
   const [showRelationModal, setShowRelationModal] = useState(false);
@@ -41,16 +48,29 @@ const App: React.FC<AppProps> = () => {
 
   const [showCreatePersonPopup, setShowCreatePersonPopup] = useState(false);
   const [showEditPersonPopup, setShowEditPersonPopup] = useState(false);
+  const [showMetaDataPopup, setShowMetaDataPopup] = useState(false);
 
   const [showParentlessNodes, setShowParentlessNodes] = useState(false);
 
   const {
+    store,
     relation,
     person: personList,
+    metadata: metadataList,
     createPerson,
     createRelation,
     updatePerson,
+    createMetadata,
+    updateMetadata,
+    deletePerson,
   } = useData();
+
+  const person = useMemo(
+    () => (personId ? personList.find((p) => p.id === personId) : undefined),
+    [personId, personList]
+  );
+  const setPerson = (p: PersonType) => setPersonId(p.id);
+
   const [personSelector, setPersonSelector] = useState<{
     cb?: (v: PersonType) => void;
     person?: PersonType;
@@ -61,25 +81,40 @@ const App: React.FC<AppProps> = () => {
       return null;
     }
 
-    return getPersonTreeByDepth(person, treeDepth, personList, relation);
-  }, [mode, person, personList, relation, treeDepth]);
+    return getPersonTreeByDepth({
+      person,
+      depth: treeDepth,
+      store,
+    });
+  }, [mode, person, store, treeDepth]);
 
   const parentlessNodes = useMemo(
     () =>
       personList.filter(
-        (person) => builder(person, personList, relation).parents.length === 0
+        // (person) => builder(person, store).parents.length === 0
+        (person) => {
+          const main = builder(person, store);
+
+          const partnersHasNoParent = main.partners
+            .map((i) => builder(i, store).parents.length === 0)
+            .every((i) => i);
+
+          return main.parents.length === 0 && partnersHasNoParent;
+        }
       ),
-    [personList, relation]
+    [personList, store]
   );
 
   const actions = [
     {
       text: 'Tree',
       handler: () => setMode(PageMode.Tree),
+      highlight: mode === PageMode.Tree,
     },
     {
       text: 'Detail',
       handler: () => setMode(PageMode.Detail),
+      highlight: mode === PageMode.Detail,
     },
     {
       text: 'Relation',
@@ -90,6 +125,10 @@ const App: React.FC<AppProps> = () => {
       handler: () => setShowEditPersonPopup(Boolean(person)),
     },
     {
+      text: 'Metadata',
+      handler: () => setShowMetaDataPopup(true),
+    },
+    {
       text: `Old Relation Mode: ${isOldRelation ? 'on' : 'off'}`,
       handler: () => setIsOldRelation((prev) => !prev),
     },
@@ -97,27 +136,16 @@ const App: React.FC<AppProps> = () => {
       text: `Parentless: ${showParentlessNodes ? 'on' : 'off'}`,
       handler: () => setShowParentlessNodes((prev) => !prev),
     },
+    {
+      text: `Delete`,
+      handler: () => person && deletePerson(person.id),
+    },
   ];
-
-  useEffect(() => {
-    if (person?.id) {
-      const url = new URL(window.location.href);
-
-      url.searchParams.delete('user');
-      url.searchParams.append('user', person.id);
-
-      const newUrl = url.toString();
-      window.history.pushState({ path: newUrl }, '', newUrl);
-    }
-  }, [person?.id]);
-
-  // const url = new URL(window.location.href);
-
-  // url.searchParams.delete('user');
 
   return (
     <AppContext.Provider
       value={{
+        store,
         relation,
         person: personList,
         createPerson,
@@ -126,6 +154,10 @@ const App: React.FC<AppProps> = () => {
         showCreatePersonModal: () => setShowCreatePersonPopup(true),
         showPersonSelector: setPersonSelector,
         treeDepth,
+        createMetadata,
+        updateMetadata,
+        metadata: metadataList,
+        deletePerson,
       }}
     >
       <div className={style.container}>
@@ -143,9 +175,13 @@ const App: React.FC<AppProps> = () => {
 
               <div>
                 {actions.map((n) => (
-                  <button onClick={n.handler} key={n.text}>
+                  <StyledActionButton
+                    onClick={n.handler}
+                    key={n.text}
+                    $highlight={n.highlight}
+                  >
                     {n.text}
-                  </button>
+                  </StyledActionButton>
                 ))}
               </div>
             </>
@@ -230,6 +266,11 @@ const App: React.FC<AppProps> = () => {
           />
         </div>
       </Popup>
+      <MetadataPopup
+        person={person}
+        open={showMetaDataPopup}
+        onClose={() => setShowMetaDataPopup(false)}
+      />
     </AppContext.Provider>
   );
 };

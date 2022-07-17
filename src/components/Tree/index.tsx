@@ -15,6 +15,7 @@ const PersonTree: React.FC<PersonTreeProps> = ({ person, onClick, child }) => {
     <li>
       <div className="tree-wrapper">
         <Person
+          id={person.id}
           personName={person.name}
           gender={person.gender}
           onClick={() => onClick?.(person)}
@@ -22,6 +23,7 @@ const PersonTree: React.FC<PersonTreeProps> = ({ person, onClick, child }) => {
         />
         {person.partners.map((pr) => (
           <Person
+            id={pr.id}
             personName={pr.name}
             gender={pr.gender}
             onClick={() => onClick?.(pr)}

@@ -1,20 +1,29 @@
-import { PersonTreeType, PersonType, RelationType } from '../types';
+import { PersonTreeType, PersonType, StoreType } from '../types';
 
-function getPersonTreeByDepth(
-  p: PersonType,
-  depth: number,
-  personList: PersonType[],
-  relation: RelationType[]
-): PersonTreeType {
-  const buildedPerson = builder(p, personList, relation);
+function getPersonTreeByDepth({
+  person,
+  depth,
+  store,
+}: {
+  person: PersonType;
+  depth: number;
+  store: StoreType;
+}): PersonTreeType {
+  const { metadata } = store;
+  const buildedPerson = builder(person, store);
 
   return {
-    ...p,
+    ...person,
     partners: buildedPerson.partners,
+    metadata: metadata.filter((m) => m.personId === person.id),
     children:
       depth > 0
         ? buildedPerson.children.map((c) =>
-            getPersonTreeByDepth(c, depth - 1, personList, relation)
+            getPersonTreeByDepth({
+              person: c,
+              depth: depth - 1,
+              store,
+            })
           )
         : [],
   };
@@ -22,8 +31,7 @@ function getPersonTreeByDepth(
 
 function builder(
   person: PersonType,
-  personList: PersonType[],
-  relation: RelationType[]
+  { person: personList, relation, metadata }: StoreType
 ) {
   const getPersonById = (id: string) =>
     personList.find((i) => i.id === id) as PersonType;
@@ -40,6 +48,7 @@ function builder(
   };
 
   return {
+    metadata: metadata.filter((m) => m.personId === person.id),
     parents: _getParents(),
     children: _getChildrenByParent(person.id),
     partners: relation

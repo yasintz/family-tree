@@ -5,6 +5,7 @@ import cx from 'classnames';
 import builder from '../../helper/builder';
 import { AppContext } from '../ctx';
 import RelationTree from '../RelationTree';
+import _ from 'lodash';
 
 type RelationFinderProps = {
   mainPerson?: PersonType;
@@ -48,13 +49,13 @@ const PersonRelation = ({
 }) => {
   const [search, setSearch] = useState('');
   const {
+    store,
     person: personList,
-    relation,
     showCreatePersonModal,
   } = useContext(AppContext);
   const builded = useMemo(
-    () => (person ? builder(person, personList, relation) : null),
-    [person, relation, personList]
+    () => (person ? builder(person, store) : null),
+    [person, store]
   );
 
   return (

@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import Tree from '../components/Tree';
-import builder from '../helper/builder';
+import builder, { getPersonTreeByDepth } from '../helper/builder';
 import { PersonTreeType, PersonType } from '../types';
 import { AppContext } from './ctx';
 import _ from 'lodash';
@@ -26,56 +26,69 @@ type PersonRelationProps = {
 };
 
 const PersonRelation: React.FC<PersonRelationProps> = ({ person, onClick }) => {
-  const { person: personList, relation } = useContext(AppContext);
+  const { store, person: personList, relation } = useContext(AppContext);
 
-  const builded = useMemo(
-    () => builder(person, personList, relation),
-    [person, relation, personList]
+  const buildedPerson = useMemo(() => builder(person, store), [person, store]);
+  const parent = buildedPerson.parents[0];
+  const buildedParent = useMemo(
+    () => (parent ? builder(parent, store) : undefined),
+    [parent, store]
   );
-
-  const parent = builded.parents[0];
 
   const personAsChild = useMemo<PersonTreeType>(
     () => ({
       ...person,
+      metadata: buildedPerson.metadata,
       highlight: true,
-      children: builded.children.map((child) => ({
-        ...child,
+      children: buildedPerson.children.map((child) => ({
+        ...getPersonTreeByDepth({ person: child, store, depth: 0 }),
         children: [],
         partners: [],
       })),
-      partners: builded.partners,
+      partners: buildedPerson.partners,
     }),
-    [builded.children, builded.partners, person]
+    [
+      buildedPerson.children,
+      buildedPerson.metadata,
+      buildedPerson.partners,
+      person,
+      store,
+    ]
   );
   const tree = useMemo<PersonTreeType>(
     () => ({
       ...(parent || person),
+      metadata: buildedParent?.metadata || buildedPerson.metadata,
       highlight: !parent,
       partners: parent
-        ? builded.parents.filter((p) => p.id !== parent.id)
-        : builded.partners,
+        ? buildedPerson.parents.filter((p) => p.id !== parent.id)
+        : buildedPerson.partners,
 
       children: _.sortBy(
         [
-          ...(parent ? builded.siblings : builded.children).map((c) => ({
-            ...c,
-            children: [],
-            partners: [],
-          })),
+          ...(parent ? buildedPerson.siblings : buildedPerson.children).map(
+            (c) => ({
+              ...getPersonTreeByDepth({ person: c, depth: 0, store }),
+              children: [],
+              partners: [],
+            })
+          ),
           ...(parent ? [personAsChild] : []),
         ],
         'name'
       ),
     }),
     [
-      builded.children,
-      builded.parents,
-      builded.partners,
-      builded.siblings,
+      buildedParent?.metadata,
+      buildedPerson.children,
+      buildedPerson.metadata,
+      buildedPerson.parents,
+      buildedPerson.partners,
+      buildedPerson.siblings,
       parent,
       person,
       personAsChild,
+      store,
     ]
   );
 

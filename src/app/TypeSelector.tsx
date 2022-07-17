@@ -1,20 +1,43 @@
 import React from 'react';
-import { RelationValueType } from '../types';
+import { RelationValueType, RelationValueTypeAdjunct } from '../types';
 
 type TypeSelectorProps = {
   onChange: (v: RelationValueType) => void;
   val: RelationValueType;
 };
 
+export const typeConfig: Record<
+  RelationValueType,
+  { text: string; adjunct: RelationValueTypeAdjunct }
+> = {
+  partner: {
+    text: 'Partner',
+    adjunct: 'with',
+  },
+  parent: {
+    text: 'Parent',
+    adjunct: 'of',
+  },
+  children: {
+    text: 'Children',
+    adjunct: 'of',
+  },
+  merge: {
+    text: 'Merge',
+    adjunct: 'with',
+  },
+};
 const TypeSelector: React.FC<TypeSelectorProps> = ({ onChange, val }) => {
   return (
     <select
       onChange={(e) => onChange(e.target.value as RelationValueType)}
       value={val}
     >
-      <option value="partner">Partner</option>
-      <option value="parent">Parent</option>
-      <option value="children">Children</option>
+      {Object.entries(typeConfig).map(([type, config]) => (
+        <option key={type} value={type}>
+          {config.text}
+        </option>
+      ))}
     </select>
   );
 };

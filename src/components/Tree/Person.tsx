@@ -3,10 +3,12 @@ import cx from 'classnames';
 import styled from 'styled-components';
 
 const StyledPerson = styled.div<{ $highlight?: boolean }>`
-  ${(props) => (props.$highlight ? `background-color: #68cd4f !important;` : '')}
+  ${(props) =>
+    props.$highlight ? `background-color: #68cd4f !important;` : ''}
 `;
 
 type PersonProps = {
+  id: string;
   gender: 0 | 1;
   personName: string;
   className?: string;
