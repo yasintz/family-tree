@@ -1,5 +1,5 @@
 import React from 'react';
-import { MetadataType, PersonType } from '../types';
+import { PersonType } from '../types';
 import useData from './data';
 
 type ContextType = ReturnType<typeof useData> & {
@@ -11,18 +11,6 @@ type ContextType = ReturnType<typeof useData> & {
   treeDepth: number;
 };
 
-export const AppContext = React.createContext<ContextType>({
-  createPerson: () => ({} as PersonType),
-  createRelation: () => 0,
-  person: [],
-  relation: [],
-  showCreatePersonModal: () => 0,
-  updatePerson: () => 0,
-  showPersonSelector: () => 0,
-  treeDepth: 3,
-  metadata: [],
-  createMetadata: () => ({} as MetadataType),
-  updateMetadata: () => 0,
-  deletePerson: () => 0,
-  store: {} as any,
-});
+export const AppContext = React.createContext<ContextType>(
+  {} as unknown as ContextType
+);

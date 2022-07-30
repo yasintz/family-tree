@@ -62,7 +62,7 @@ const MetadataItem = ({ onSave, metadata, keys }: MetadataItemPropsType) => {
 type MetadataPopupProps = {
   open: boolean;
   onClose: () => void;
-  person?: PersonType;
+  person: PersonType;
 };
 
 export const MetadataPopup = ({
@@ -71,11 +71,8 @@ export const MetadataPopup = ({
   onClose,
 }: MetadataPopupProps) => {
   const { createMetadata, updateMetadata, store } = useContext(AppContext);
-  const buildedPerson = useMemo(
-    () => (person ? builder(person, store) : undefined),
-    [person, store]
-  );
-  const metadataList = buildedPerson?.metadata || [];
+  const buildedPerson = useMemo(() => builder(person, store), [person, store]);
+  const metadataList = buildedPerson.metadata || [];
 
   const keys = useMemo(
     () => _.uniq(store.metadata.map((m) => m.key)),

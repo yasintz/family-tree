@@ -206,20 +206,25 @@ function useMetadataActions(params: Params) {
 
       return arrayCopy;
     });
+  const deleteMetadata = (id: string) => {
+    setMetadata((prev) => prev.filter((i) => i.id !== id));
+  };
 
-  return { createMetadata, updateMetadata };
+  return { createMetadata, updateMetadata, deleteMetadata };
 }
 
 export function useActions(params: Params) {
   const { createPerson, updatePerson, deletePerson } = usePersonActions(params);
   const { createRelation } = useRelationActions(params);
-  const { createMetadata, updateMetadata } = useMetadataActions(params);
+  const { createMetadata, updateMetadata, deleteMetadata } =
+    useMetadataActions(params);
 
   return {
     createPerson,
     updatePerson,
     createRelation,
     createMetadata,
+    deleteMetadata,
     updateMetadata,
     deletePerson,
   };

@@ -1,9 +1,11 @@
 import uniqBy from 'lodash/uniqBy';
 import { useEffect, useMemo, useState } from 'react';
+import axios from 'axios';
 import { MetadataType, PersonType, RelationType, StoreType } from '../types';
 import throttle from 'lodash/throttle';
 
 import { useActions } from './data/useActions';
+import { SyncStatusEnum } from '../components/sync';
 
 const params = new URLSearchParams(window.location.search);
 const url = params.get('api') || 'https://api.npoint.io/ae8995c6924d92c556f8';
@@ -11,15 +13,7 @@ const url = params.get('api') || 'https://api.npoint.io/ae8995c6924d92c556f8';
 const db = {
   get: () => fetch(url).then((i) => i.json() as Promise<StoreType>),
   set: throttle(
-    (store: StoreType) =>
-      fetch(url, {
-        method: 'post',
-        headers: {
-          Accept: 'application/json, text/plain, */*',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(store),
-      }).then((res) => res.json()),
+    (store: StoreType) => axios.post(url, store).then((res) => res.data),
     1000
   ),
 };
@@ -31,6 +25,9 @@ function useData() {
   const personState = useState<PersonType[]>([]);
   const relationState = useState<RelationType[]>([]);
   const metadataState = useState<MetadataType[]>([]);
+  const [syncStatus, setSyncStatus] = useState<SyncStatusEnum>(
+    SyncStatusEnum.Loaded
+  );
 
   const {
     createPerson,
@@ -39,6 +36,7 @@ function useData() {
     createMetadata,
     updateMetadata,
     deletePerson,
+    deleteMetadata,
   } = useActions({
     personState,
     relationState,
@@ -78,7 +76,13 @@ function useData() {
       return;
     }
 
-    db.set(store);
+    setSyncStatus(SyncStatusEnum.Loading);
+    db.set(store)
+      ?.then(() => setSyncStatus(SyncStatusEnum.Loaded))
+      .catch((error) => {
+        console.log({ error });
+        setSyncStatus(SyncStatusEnum.Failed);
+      });
   }, [store]);
 
   return {
@@ -92,6 +96,8 @@ function useData() {
     createMetadata,
     updateMetadata,
     deletePerson,
+    syncStatus,
+    deleteMetadata,
   };
 }
 

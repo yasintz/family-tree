@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import Popup from '../components/Popup';
 import Sidebar from '../components/Sidebar';
 import Tree from '../components/Tree';
@@ -8,12 +8,17 @@ import RelationFinder from './RelationDetail';
 import style from './app.module.scss';
 import { AppContext } from './ctx';
 import useData from './data';
-import builder, { getPersonTreeByDepth } from '../helper/builder';
+import builder, {
+  getPersonTreeByDepth,
+  getParentTreeByDepth,
+} from '../helper/builder';
 import styled from 'styled-components';
 import RelationTree from './RelationTree';
 import CreateUpdateModal from './CreateUpdateModal';
 import { usePersonIdStateFromUrl } from '../hooks/use-person-id-state-from-url';
 import { MetadataPopup } from './MetadataPopup';
+import { Sync } from '../components/sync';
+import { RawJsonPopup } from './RawJsonPopup';
 
 const StyledTreeContainer = styled.div`
   display: flex;
@@ -36,6 +41,7 @@ const StyledActionButton = styled.button<{ $highlight?: boolean }>`
 enum PageMode {
   Tree,
   Detail,
+  ParentTree,
 }
 
 const App: React.FC = () => {
@@ -49,21 +55,20 @@ const App: React.FC = () => {
   const [showCreatePersonPopup, setShowCreatePersonPopup] = useState(false);
   const [showEditPersonPopup, setShowEditPersonPopup] = useState(false);
   const [showMetaDataPopup, setShowMetaDataPopup] = useState(false);
+  const [showRawJsonPopup, setShowRawJsonPopup] = useState(false);
 
   const [showParentlessNodes, setShowParentlessNodes] = useState(false);
 
+  const data = useData();
+
   const {
     store,
-    relation,
     person: personList,
-    metadata: metadataList,
     createPerson,
-    createRelation,
     updatePerson,
-    createMetadata,
-    updateMetadata,
     deletePerson,
-  } = useData();
+    syncStatus,
+  } = data;
 
   const person = useMemo(
     () => (personId ? personList.find((p) => p.id === personId) : undefined),
@@ -77,31 +82,39 @@ const App: React.FC = () => {
   }>();
 
   const personTree = useMemo(() => {
-    if (!person || mode !== PageMode.Tree) {
+    if (!person) {
       return null;
     }
 
-    return getPersonTreeByDepth({
-      person,
-      depth: treeDepth,
-      store,
-    });
+    if (mode === PageMode.ParentTree) {
+      return getParentTreeByDepth({
+        person,
+        depth: treeDepth,
+        store,
+      });
+    }
+
+    if (mode === PageMode.Tree) {
+      return getPersonTreeByDepth({
+        person,
+        depth: treeDepth,
+        store,
+      });
+    }
+    return null;
   }, [mode, person, store, treeDepth]);
 
   const parentlessNodes = useMemo(
     () =>
-      personList.filter(
-        // (person) => builder(person, store).parents.length === 0
-        (person) => {
-          const main = builder(person, store);
+      personList.filter((person) => {
+        const main = builder(person, store);
 
-          const partnersHasNoParent = main.partners
-            .map((i) => builder(i, store).parents.length === 0)
-            .every((i) => i);
+        const partnersHasNoParent = main.partners
+          .map((i) => builder(i, store).parents.length === 0)
+          .every((i) => i);
 
-          return main.parents.length === 0 && partnersHasNoParent;
-        }
-      ),
+        return main.parents.length === 0 && partnersHasNoParent;
+      }),
     [personList, store]
   );
 
@@ -117,12 +130,17 @@ const App: React.FC = () => {
       highlight: mode === PageMode.Detail,
     },
     {
+      text: 'Parent Tree',
+      handler: () => setMode(PageMode.ParentTree),
+      highlight: mode === PageMode.ParentTree,
+    },
+    {
       text: 'Relation',
       handler: () => setShowRelationModal(true),
     },
     {
       text: 'Edit',
-      handler: () => setShowEditPersonPopup(Boolean(person)),
+      handler: () => setShowEditPersonPopup(true),
     },
     {
       text: 'Metadata',
@@ -140,24 +158,19 @@ const App: React.FC = () => {
       text: `Delete`,
       handler: () => person && deletePerson(person.id),
     },
+    {
+      text: 'Raw Json',
+      handler: () => setShowRawJsonPopup(true),
+    },
   ];
 
   return (
     <AppContext.Provider
       value={{
-        store,
-        relation,
-        person: personList,
-        createPerson,
-        createRelation,
-        updatePerson,
+        ...data,
         showCreatePersonModal: () => setShowCreatePersonPopup(true),
         showPersonSelector: setPersonSelector,
         treeDepth,
-        createMetadata,
-        updateMetadata,
-        metadata: metadataList,
-        deletePerson,
       }}
     >
       <div className={style.container}>
@@ -219,22 +232,23 @@ const App: React.FC = () => {
           </div>
         )}
 
-        {mode === PageMode.Tree && personTree && (
-          <StyledTreeContainer>
-            <StyledDepthInputContainer>
-              Depth:
-              <input
-                type="number"
-                value={treeDepth.toString()}
-                onChange={(e) => setTreeDepth(parseInt(e.target.value))}
-              />
-            </StyledDepthInputContainer>
+        {(mode === PageMode.Tree || mode === PageMode.ParentTree) &&
+          personTree && (
+            <StyledTreeContainer>
+              <StyledDepthInputContainer>
+                Depth:
+                <input
+                  type="number"
+                  value={treeDepth.toString()}
+                  onChange={(e) => setTreeDepth(parseInt(e.target.value))}
+                />
+              </StyledDepthInputContainer>
 
-            <div className={style.treeContainer}>
-              <Tree person={personTree} onClick={setPerson} />
-            </div>
-          </StyledTreeContainer>
-        )}
+              <div className={style.treeContainer}>
+                <Tree person={personTree} onClick={setPerson} />
+              </div>
+            </StyledTreeContainer>
+          )}
       </div>
       <AddRelation
         person={showRelationModal ? person : undefined}
@@ -266,11 +280,21 @@ const App: React.FC = () => {
           />
         </div>
       </Popup>
-      <MetadataPopup
-        person={person}
-        open={showMetaDataPopup}
-        onClose={() => setShowMetaDataPopup(false)}
-      />
+      {person && (
+        <>
+          <MetadataPopup
+            person={person}
+            open={showMetaDataPopup}
+            onClose={() => setShowMetaDataPopup(false)}
+          />
+          <RawJsonPopup
+            person={person}
+            open={showRawJsonPopup}
+            onClose={() => setShowRawJsonPopup(false)}
+          />
+        </>
+      )}
+      <Sync status={syncStatus} />
     </AppContext.Provider>
   );
 };

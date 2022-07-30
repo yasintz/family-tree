@@ -1,4 +1,3 @@
-import { sortBy } from 'lodash';
 import React, { useMemo, useState } from 'react';
 import { PersonType } from '../../types';
 import style from './Sidebar.module.scss';
@@ -27,11 +26,18 @@ const Sidebar: React.FC<SidebarProps> = ({
   }, [person, search]);
   return (
     <div className={style.container}>
+      <span style={{ fontSize: 12, marginTop: 16 }}>
+        {persons.length} Person
+      </span>
       <div className={style.createPerson} onClick={onCreatePersonClick}>
         Create Person
       </div>
 
-      <input value={search} onChange={(e) => setSearch(e.target.value)} />
+      <input
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        placeholder="Search..."
+      />
       <div className={style.listContainer}>
         {persons.map((p) => (
           <SideItem {...p} onClick={() => onClick(p)} key={p.id} />

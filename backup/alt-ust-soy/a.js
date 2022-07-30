@@ -1,155 +1,189 @@
 const _ = require('lodash');
-const temp1 = require('./mehmet.json');
+const { turkishToEnglish, uid } = require('./lib');
 
-const uniqueId = 'Cilt-Hane-Birey Sıra No';
+const temp1 = require('./yildiz.json');
 
-const uid = () => Math.random().toString(36).substring(2, 12);
+const getHashById = (str) => {
+  getHashById.store = getHashById.store || {};
 
-const turkishToEnglish = (val) => {
-  return val
-    .replace(/Ğ/g, 'G')
-    .replace(/ğ/g, 'g')
-    .replace(/Ü/g, 'U')
-    .replace(/ü/g, 'u')
-    .replace(/Ş/g, 'S')
-    .replace(/ş/g, 's')
-    .replace(/İ/g, 'I')
-    .replace(/ı/g, 'i')
-    .replace(/Ö/g, 'O')
-    .replace(/ö/g, 'o')
-    .replace(/Ç/g, 'C')
-    .replace(/ç/g, 'c');
+  getHashById.store[str] = getHashById.store[str] || uid();
+
+  return getHashById.store[str];
 };
 
-function convert(element) {
-  element.name = `${element['Adı']}`;
-  element.idn = turkishToEnglish(element.name.split(' ').join(''));
-  element.birth = ((element['Doğum Yeri ve Tarihi'] || '').split('\n')[1] || '')
+function convert(obj) {
+  Object.assign(obj, {
+    cilt: obj['Cilt-Hane-Birey Sıra No'] || Math.random(),
+    gender: obj.C === 'E' ? 0 : 1,
+    degree: obj['Yakınlık Derecesi'],
+    name: obj['Adı'],
+    surname: obj['Soyadı'],
+    fatherName: obj['Baba Adı'],
+    motherName: obj['Ana Adı'],
+    place: (obj['İl-İlçe-Mahalle/Köy'] || '').split('\n').join(''),
+  });
+
+  obj.birth = ((obj['Doğum Yeri ve Tarihi'] || '').split('\n')[1] || '')
     .trim()
     .replace('-', '');
 
-  element.death = ((element['Durumu'] || '').split('\n')[1] || '')
+  obj.death = ((obj['Durumu'] || '').split('\n')[1] || '')
     .trim()
     .replace('-', '');
 
-  element.gender = element.C === 'E' ? 0 : 1;
+  if (obj.surname === '-') {
+    obj.surname = '';
+  }
 
-  element.id = `${element.idn}_${element.gender}_${uid()}`;
-  return element;
+  const idn = turkishToEnglish(obj.name.split(' ').join(''));
+  obj.id = `${idn}_${obj.gender}_${getHashById(obj.cilt)}`;
+  return obj;
 }
 
-function getRelationsByNode(relation, node, list) {
-  const ek = node.C === 'K' ? 'nin' : 'nın';
-  const motherKey = `${relation}${ek} Annesi`;
-  const fatherKey = `${relation}${ek} Babası`;
-  node.mother = list[motherKey];
-  node.father = list[fatherKey];
+function relationFatherAndMotherToUser({ user, degreeMap, users }) {
+  const ek = user.gender === 1 ? 'nin' : 'nın';
+  const motherId = degreeMap[`${user.degree}${ek} Annesi`];
+  const fatherId = degreeMap[`${user.degree}${ek} Babası`];
+  user.mother = users.find((user) => user.id === motherId);
+  user.father = users.find((user) => user.id === fatherId);
 
-  if (!node.mother) {
-    list[motherKey] = convert({
-      Adı: node['Ana Adı'],
+  const newUsers = [];
+
+  if (!user.mother) {
+    const newMother = convert({
+      Adı: user.motherName,
       C: 'K',
       Soyadı: '',
     });
-    node.mother = list[motherKey];
+
+    user.mother = newMother;
+    newUsers.push(newMother);
   }
-  if (!node.father) {
-    list[fatherKey] = convert({
+  if (!user.father) {
+    const newFather = convert({
       C: 'E',
-      Adı: node['Baba Adı'],
-      Soyadı: '',
+      Adı: user.fatherName,
+      Soyadı: user.surname,
     });
-    node.father = list[fatherKey];
+    user.father = newFather;
+    newUsers.push(newFather);
   }
+
+  return newUsers;
 }
 
-const converted = temp1.map(convert);
-const byUnique = _.groupBy(converted, uniqueId);
-const result = converted.reduce((acc, cur) => {
-  cur.id = byUnique[cur[uniqueId]][0].id;
-  acc[cur['Yakınlık Derecesi']] = cur;
-  return acc;
-}, {});
+function main() {
+  const converted = temp1.map(convert);
+  const users = Object.keys(_.groupBy(converted, 'id')).map((id) =>
+    converted.find((u) => u.id === id)
+  );
+  const degreeMap = converted.reduce((acc, cur) => {
+    acc[cur.degree] = cur.id;
+    return acc;
+  }, {});
 
-Object.keys(result).forEach((r) => getRelationsByNode(r, result[r], result));
+  users.forEach((user) => {
+    const newUsers = relationFatherAndMotherToUser({
+      user,
+      degreeMap,
+      users,
+    });
 
-const person = [];
-const relation = [];
-const metadata = [];
-
-_.uniqBy(Object.values(result), 'id').forEach((p) => {
-  person.push({
-    id: p.id,
-    gender: p.gender,
-    name: p.name,
+    users.push(...newUsers);
   });
 
-  if (p.mother) {
-    relation.push({
-      id: `parent-${p.mother.id}-${p.id}`,
-      main: p.mother.id,
-      second: p.id,
-      type: 'parent',
-    });
-  }
-  if (p.father) {
-    relation.push({
-      id: `parent-${p.father.id}-${p.id}`,
-      main: p.father.id,
-      second: p.id,
-      type: 'parent',
-    });
-  }
+  const person = [];
+  const relation = [];
+  const metadata = [];
 
-  if (p.father && p.mother) {
-    relation.push({
-      id: `partner-${p.father.id}-${p.mother.id}`,
-      main: p.father.id,
-      second: p.mother.id,
-      type: 'partner',
+  users.forEach((user) => {
+    person.push({
+      id: user.id,
+      gender: user.gender,
+      name: user.name,
     });
-  }
 
-  if (p.birth) {
-    metadata.push({
-      personId: p.id,
-      id: `birthdate_${uid()}`,
-      key: 'birthdate',
-      value: p.birth,
-    });
-  }
+    if (user.mother) {
+      relation.push({
+        id: `parent-${user.mother.id}-${user.id}`,
+        main: user.mother.id,
+        second: user.id,
+        type: 'parent',
+      });
+    }
+    if (user.father) {
+      relation.push({
+        id: `parent-${user.father.id}-${user.id}`,
+        main: user.father.id,
+        second: user.id,
+        type: 'parent',
+      });
+    }
 
-  if (p.death) {
+    if (user.father && user.mother) {
+      const relationId = `partner-${user.father.id}-${user.mother.id}`;
+      if (!relation.find((r) => r.id === relationId)) {
+        relation.push({
+          id: `partner-${user.father.id}-${user.mother.id}`,
+          main: user.father.id,
+          second: user.mother.id,
+          type: 'partner',
+        });
+      }
+    }
+
+    if (user.birth) {
+      metadata.push({
+        personId: user.id,
+        id: `birthdate_${uid()}`,
+        key: 'birthdate',
+        value: user.birth,
+      });
+    }
+
+    if (user.death) {
+      metadata.push({
+        personId: user.id,
+        id: `dateofdeath_${uid()}`,
+        key: 'date of death',
+        value: user.death,
+      });
+    }
+    if (user.surname) {
+      metadata.push({
+        personId: user.id,
+        id: `surname_${uid()}`,
+        key: 'surname',
+        value: user.surname,
+      });
+    }
+    if (user.place) {
+      metadata.push({
+        personId: user.id,
+        id: `place_${uid()}`,
+        key: 'place',
+        value: user.place,
+      });
+    }
+
     metadata.push({
-      personId: p.id,
-      id: `dateofdeath_${uid()}`,
-      key: 'date of death',
-      value: p.death,
+      personId: user.id,
+      id: `cilt_${uid()}`,
+      key: 'cilt',
+      value: user.cilt,
     });
-  }
-  if (p['Soyadı']) {
-    metadata.push({
-      personId: p.id,
-      id: `surname_${uid()}`,
-      key: 'surname',
-      value: p['Soyadı'],
-    });
-  }
-  metadata.push({
-    personId: p.id,
-    id: `surname_${uid()}`,
-    key: 'cilt',
-    value: p[uniqueId],
   });
-});
 
-console.log(
-  JSON.stringify({
-    person: person.filter(
-      (p) =>
-        relation.filter((r) => r.main === p.id || r.second === p.id).length > 0
-    ),
-    relation,
-    metadata,
-  })
-);
+  console.log(
+    JSON.stringify(
+      {
+        person,
+        relation,
+        metadata,
+      }
+      // null,
+      // 2
+    )
+  );
+}
+main();
