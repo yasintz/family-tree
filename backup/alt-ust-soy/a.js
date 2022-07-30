@@ -1,3 +1,5 @@
+// https://www.npoint.io/docs/03cf70b0fa9bc972840a
+
 const _ = require('lodash');
 const { turkishToEnglish, uid } = require('./lib');
 
