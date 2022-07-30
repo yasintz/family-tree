@@ -11,9 +11,14 @@ jobs:
   backup:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Create backup file
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Get current db
         run: curl https://api.npoint.io/ae8995c6924d92c556f8 > "backup/current.json"
+      - name: Format backup file
+        run: node scripts/format-backup.js
       - name: Commit backup
         run: |
           git config --global user.name 'Github Backup Action'
