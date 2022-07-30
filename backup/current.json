@@ -557,7 +557,7 @@
     },
     {
       "id": "Mehmetdurnaoğlu_0_zv4ht3mqe9r",
-      "name": "Mehmet durnaoğlu",
+      "name": "Mehmet",
       "gender": 0
     },
     {
@@ -1052,6 +1052,36 @@
     }
   ],
   "metadata": [
+    {
+      "id": "cilt_rmzrtq8f94",
+      "key": "cilt",
+      "value": "112-49-4",
+      "personId": "Mehmetdurnaoğlu_0_zv4ht3mqe9r"
+    },
+    {
+      "id": "place_najd4x9c5j",
+      "key": "place",
+      "value": "Gaziantep/Şehitkamil/YEŞİLCE MAHALLESİ",
+      "personId": "Mehmetdurnaoğlu_0_zv4ht3mqe9r"
+    },
+    {
+      "id": "surname_g4afbjhkyh",
+      "key": "surname",
+      "value": "DURNAOĞLU",
+      "personId": "Mehmetdurnaoğlu_0_zv4ht3mqe9r"
+    },
+    {
+      "id": "dateofdeath_sl1oxs39dm",
+      "key": "date of death",
+      "value": "15/05/1982",
+      "personId": "Mehmetdurnaoğlu_0_zv4ht3mqe9r"
+    },
+    {
+      "id": "birthdate_r3rkv8yq8q",
+      "key": "birthdate",
+      "value": "01/07/1899",
+      "personId": "Mehmetdurnaoğlu_0_zv4ht3mqe9r"
+    },
     {
       "id": "cilt_1vgv529icg",
       "key": "cilt",
