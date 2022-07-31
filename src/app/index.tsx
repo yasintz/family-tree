@@ -262,7 +262,11 @@ const App: React.FC = () => {
               </StyledDepthInputContainer>
 
               <div className={style.treeContainer}>
-                <Tree person={personTree} onClick={setPerson} />
+                <Tree
+                  person={personTree}
+                  onClick={setPerson}
+                  parentTree={mode === PageMode.ParentTree}
+                />
               </div>
             </StyledTreeContainer>
           )}

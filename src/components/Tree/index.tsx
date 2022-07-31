@@ -8,12 +8,23 @@ type PersonTreeProps = {
   person: PersonTreeType;
   onClick?: (person: PersonType) => void;
   child?: boolean;
+  parentTree?: boolean;
 };
 
-const PersonTree: React.FC<PersonTreeProps> = ({ person, onClick, child }) => {
+const PersonTree: React.FC<PersonTreeProps> = ({
+  person,
+  onClick,
+  child,
+  parentTree,
+}) => {
   const content = (
     <li>
-      <div className="tree-wrapper">
+      <div
+        className="tree-wrapper"
+        style={{
+          transform: parentTree ? 'rotate(180deg)' : '',
+        }}
+      >
         <Person
           id={person.id}
           personName={person.name}
@@ -57,15 +68,18 @@ const PersonTree: React.FC<PersonTreeProps> = ({ person, onClick, child }) => {
 type TreeProps = {
   person: PersonTreeType;
   onClick?: (person: PersonType) => void;
+  parentTree?: boolean;
 };
 
-const Tree: React.FC<TreeProps> = ({ person, onClick }) => {
+const Tree: React.FC<TreeProps> = ({ person, onClick, parentTree }) => {
   const [size, setSize] = useState({
     width: 0,
     height: 0,
   });
 
-  const el = <PersonTree person={person} onClick={onClick} />;
+  const el = (
+    <PersonTree person={person} onClick={onClick} parentTree={parentTree} />
+  );
 
   return (
     <>
@@ -74,6 +88,7 @@ const Tree: React.FC<TreeProps> = ({ person, onClick }) => {
         style={{
           minWidth: size.width,
           minHeight: size.height,
+          transform: parentTree ? 'rotate(180deg)' : '',
         }}
       >
         {el}
