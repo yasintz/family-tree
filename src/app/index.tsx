@@ -56,6 +56,8 @@ const App: React.FC = () => {
   const [showEditPersonPopup, setShowEditPersonPopup] = useState(false);
   const [showMetaDataPopup, setShowMetaDataPopup] = useState(false);
   const [showRawJsonPopup, setShowRawJsonPopup] = useState(false);
+  const [showSiblingsInParentTree, setShowSiblingsInParentTree] =
+    useState(false);
 
   const [showParentlessNodes, setShowParentlessNodes] = useState(false);
 
@@ -91,6 +93,7 @@ const App: React.FC = () => {
         person,
         depth: treeDepth,
         store,
+        showSiblings: showSiblingsInParentTree,
       });
     }
 
@@ -102,7 +105,7 @@ const App: React.FC = () => {
       });
     }
     return null;
-  }, [mode, person, store, treeDepth]);
+  }, [mode, person, store, treeDepth, showSiblingsInParentTree]);
 
   const parentlessNodes = useMemo(
     () =>
@@ -236,12 +239,26 @@ const App: React.FC = () => {
           personTree && (
             <StyledTreeContainer>
               <StyledDepthInputContainer>
-                Depth:
-                <input
-                  type="number"
-                  value={treeDepth.toString()}
-                  onChange={(e) => setTreeDepth(parseInt(e.target.value))}
-                />
+                <label>
+                  Depth:
+                  <input
+                    type="number"
+                    value={treeDepth.toString()}
+                    onChange={(e) => setTreeDepth(parseInt(e.target.value))}
+                  />
+                </label>
+                {mode === PageMode.ParentTree && (
+                  <label style={{ marginLeft: 8 }}>
+                    <input
+                      type="checkbox"
+                      checked={showSiblingsInParentTree}
+                      onChange={() =>
+                        setShowSiblingsInParentTree((prev) => !prev)
+                      }
+                    />
+                    Show Siblings
+                  </label>
+                )}
               </StyledDepthInputContainer>
 
               <div className={style.treeContainer}>

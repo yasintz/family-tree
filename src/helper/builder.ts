@@ -35,16 +35,18 @@ function getParentTreeByDepth({
   person,
   depth,
   store,
+  showSiblings,
 }: {
   person: PersonType;
   depth: number;
   store: StoreType;
+  showSiblings: boolean;
 }): PersonTreeType {
   const buildedPerson = builder(person, store);
 
   return {
     ...person,
-    partners: emptyArray,
+    partners: showSiblings ? buildedPerson.siblings : emptyArray,
     metadata: emptyArray,
     children:
       depth > 0
@@ -53,6 +55,7 @@ function getParentTreeByDepth({
               person: c,
               depth: depth - 1,
               store,
+              showSiblings,
             })
           )
         : emptyArray,

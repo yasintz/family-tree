@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import cx from 'classnames';
 import styled from 'styled-components';
+import { getPersonUrl } from '../../helper';
 
-const StyledPerson = styled.div<{ $highlight?: boolean }>`
+const StyledPerson = styled.a<{ $highlight?: boolean }>`
+  text-decoration: none;
+  color: #666;
   ${(props) =>
     props.$highlight ? `background-color: #68cd4f !important;` : ''}
 `;
@@ -19,17 +22,23 @@ type PersonProps = {
 const genderClass = ['male', 'female'];
 
 const Person: React.FC<PersonProps> = ({
+  id,
   personName,
   className,
   gender,
   highlight,
   onClick,
 }) => {
+  const url = useMemo(() => getPersonUrl(id, window.location.href), [id]);
   return (
     <StyledPerson
-      onClick={onClick}
+      onClick={(e) => {
+        e.preventDefault();
+        onClick();
+      }}
       className={cx(genderClass[gender], className)}
       $highlight={highlight}
+      href={url}
     >
       {personName}
     </StyledPerson>
