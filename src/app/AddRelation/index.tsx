@@ -3,11 +3,9 @@ import style from './AddRelation.module.scss';
 import { PersonType, RelationValueType } from '../../types';
 import TypeSelector, { typeConfig } from '../TypeSelector';
 import { AppContext } from '../ctx';
-import { popupHoc } from '../../components/Popup';
 
 type AddRelationProps = {
   person?: PersonType;
-  onClose: () => void;
 };
 
 type PersonSelectorBoxProps = {
@@ -199,7 +197,4 @@ const AddRelation: React.FC<AddRelationProps> = ({ person }) => {
   );
 };
 
-export default popupHoc(AddRelation, (prop) => ({
-  open: !!prop.person,
-  onClose: prop.onClose,
-}));
+export default AddRelation;

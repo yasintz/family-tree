@@ -50,6 +50,7 @@ const PersonTree: React.FC<PersonTreeProps> = ({
               person={child}
               onClick={onClick}
               key={`${person.id}Child${child.id}`}
+              parentTree={parentTree}
               child
             />
           ))}

@@ -60,16 +60,10 @@ const MetadataItem = ({ onSave, metadata, keys }: MetadataItemPropsType) => {
 };
 
 type MetadataPopupProps = {
-  open: boolean;
-  onClose: () => void;
   person: PersonType;
 };
 
-export const MetadataPopup = ({
-  person,
-  open,
-  onClose,
-}: MetadataPopupProps) => {
+export const MetadataPopup = ({ person }: MetadataPopupProps) => {
   const { createMetadata, updateMetadata, store } = useContext(AppContext);
   const buildedPerson = useMemo(() => builder(person, store), [person, store]);
   const metadataList = buildedPerson.metadata || [];
@@ -80,33 +74,31 @@ export const MetadataPopup = ({
   );
 
   return (
-    <Popup open={open} onClose={onClose}>
-      <div style={{ width: 300, height: 400 }}>
-        {metadataList.map((metadata) => (
-          <MetadataItem
-            keys={keys}
-            key={metadata.id}
-            metadata={metadata}
-            onSave={({ key, value }) =>
-              updateMetadata(metadata.id, { key, value })
-            }
-          />
-        ))}
-
-        <button
-          onClick={() =>
-            person &&
-            createMetadata({
-              personId: person.id,
-              key: '',
-              value: '',
-              order: metadataList.length,
-            })
+    <div style={{ padding: 16 }}>
+      {metadataList.map((metadata) => (
+        <MetadataItem
+          keys={keys}
+          key={metadata.id}
+          metadata={metadata}
+          onSave={({ key, value }) =>
+            updateMetadata(metadata.id, { key, value })
           }
-        >
-          Add
-        </button>
-      </div>
-    </Popup>
+        />
+      ))}
+
+      <button
+        onClick={() =>
+          person &&
+          createMetadata({
+            personId: person.id,
+            key: '',
+            value: '',
+            order: metadataList.length,
+          })
+        }
+      >
+        Add
+      </button>
+    </div>
   );
 };

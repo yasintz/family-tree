@@ -16,13 +16,7 @@ const CreatePerson: React.FC<CreatePersonProps> = ({
   const [name, setName] = useState(initialName);
   const [gender, setGender] = useState<Gender>(initialGender);
   return (
-    <div
-      className={style.createPersonContent}
-      style={{
-        // @ts-ignore
-        '--scaleRate': Math.max(window.innerWidth / 10 / 65, 1.2),
-      }}
-    >
+    <div className={style.createPersonContent}>
       <label>
         Name:
         <input value={name} onChange={(e) => setName(e.target.value)} />

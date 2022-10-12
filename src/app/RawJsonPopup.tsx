@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import Popup from '../components/Popup';
 import builder from '../helper/builder';
 import { MetadataType, PersonType } from '../types';
 import { AppContext } from './ctx';
@@ -9,7 +8,7 @@ import { AppContext } from './ctx';
 const StyledContainer = styled.div`
   width: 350px;
   height: 350px;
-  padding: 8px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
 
@@ -22,8 +21,6 @@ const StyledContainer = styled.div`
 `;
 
 type RawJsonPopupProps = {
-  open: boolean;
-  onClose: () => void;
   person: PersonType;
 };
 
@@ -31,7 +28,7 @@ type RawJsonType = Pick<PersonType, 'name' | 'gender'> & {
   metadata: Array<Pick<MetadataType, 'key' | 'value' | 'order'>>;
 };
 
-export const RawJsonPopup = ({ person, open, onClose }: RawJsonPopupProps) => {
+export const RawJsonPopup = ({ person }: RawJsonPopupProps) => {
   const {
     createMetadata,
     deleteMetadata,
@@ -114,14 +111,9 @@ export const RawJsonPopup = ({ person, open, onClose }: RawJsonPopupProps) => {
   }, [raw]);
 
   return (
-    <Popup open={open} onClose={onClose}>
-      <StyledContainer>
-        <textarea
-          value={rawJson}
-          onChange={(e) => setRawJson(e.target.value)}
-        />
-        <button onClick={update}>Update</button>
-      </StyledContainer>
-    </Popup>
+    <StyledContainer>
+      <textarea value={rawJson} onChange={(e) => setRawJson(e.target.value)} />
+      <button onClick={update}>Update</button>
+    </StyledContainer>
   );
 };
