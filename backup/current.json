@@ -1,6 +1,16 @@
 {
   "person": [
     {
+      "id": "Hacahmet_0_m0p1ytn49y",
+      "name": "Haci Ahmet",
+      "gender": 0
+    },
+    {
+      "id": "Okkes_0_zwmyc7pm5h",
+      "name": "Okkes",
+      "gender": 0
+    },
+    {
       "id": "Emine_1_ud9e3w9p46",
       "name": "Emine",
       "gender": 1
@@ -3736,6 +3746,30 @@
       "main": "Mustafa_0_xlu0520grd",
       "type": "parent",
       "second": "Mehmetdurnaoğlu_0_zv4ht3mqe9r"
+    },
+    {
+      "id": "parent-Okkes_0_zwmyc7pm5h-Ayse_1_5l062ihzlnj",
+      "main": "Okkes_0_zwmyc7pm5h",
+      "type": "parent",
+      "second": "Ayse_1_5l062ihzlnj"
+    },
+    {
+      "id": "parent-OkelekÖkkeş_0_yym2k62zosr-Hacahmet_0_m0p1ytn49y",
+      "main": "OkelekÖkkeş_0_yym2k62zosr",
+      "type": "parent",
+      "second": "Hacahmet_0_m0p1ytn49y"
+    },
+    {
+      "id": "parent-Bediha_1_z5qx56w5ppe-Hacahmet_0_m0p1ytn49y",
+      "main": "Bediha_1_z5qx56w5ppe",
+      "type": "parent",
+      "second": "Hacahmet_0_m0p1ytn49y"
+    },
+    {
+      "id": "parent-Hacahmet_0_m0p1ytn49y-Okkes_0_zwmyc7pm5h",
+      "main": "Hacahmet_0_m0p1ytn49y",
+      "type": "parent",
+      "second": "Okkes_0_zwmyc7pm5h"
     }
   ]
 }
