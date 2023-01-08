@@ -1,6 +1,41 @@
 {
   "person": [
     {
+      "id": "Hirto_0_slsijyuhnj",
+      "name": "Hirto",
+      "gender": 0
+    },
+    {
+      "id": "OkMamet_0_xadajw8oyc",
+      "name": "Ok Mamet",
+      "gender": 0
+    },
+    {
+      "id": "Sevgi_1_2zr3k5xill",
+      "name": "Sevgi",
+      "gender": 1
+    },
+    {
+      "id": "Meyrem_1_jdgscshtip",
+      "name": "Meyrem",
+      "gender": 1
+    },
+    {
+      "id": "MuratSepik_0_205pn8q8oy",
+      "name": "Murat Sepik",
+      "gender": 0
+    },
+    {
+      "id": "siho_0_ckkg1g4d62",
+      "name": "şıho",
+      "gender": 0
+    },
+    {
+      "id": "Done_1_jkalvuc1gf",
+      "name": "Done",
+      "gender": 1
+    },
+    {
       "id": "Hacahmet_0_m0p1ytn49y",
       "name": "Haci Ahmet",
       "gender": 0
@@ -3770,6 +3805,60 @@
       "main": "Hacahmet_0_m0p1ytn49y",
       "type": "parent",
       "second": "Okkes_0_zwmyc7pm5h"
+    },
+    {
+      "id": "parent-Hayriye_1_jt2xjsr5zw-Done_1_jkalvuc1gf",
+      "main": "Hayriye_1_jt2xjsr5zw",
+      "type": "parent",
+      "second": "Done_1_jkalvuc1gf"
+    },
+    {
+      "id": "partner-Done_1_jkalvuc1gf-siho_0_ckkg1g4d62",
+      "main": "Done_1_jkalvuc1gf",
+      "type": "partner",
+      "second": "siho_0_ckkg1g4d62"
+    },
+    {
+      "id": "parent-Done_1_jkalvuc1gf-MuratSepik_0_205pn8q8oy",
+      "main": "Done_1_jkalvuc1gf",
+      "type": "parent",
+      "second": "MuratSepik_0_205pn8q8oy"
+    },
+    {
+      "id": "parent-siho_0_ckkg1g4d62-MuratSepik_0_205pn8q8oy",
+      "main": "siho_0_ckkg1g4d62",
+      "type": "parent",
+      "second": "MuratSepik_0_205pn8q8oy"
+    },
+    {
+      "id": "partner-Mehmetdurnaoğlu_0_zv4ht3mqe9r-Meyrem_1_jdgscshtip",
+      "main": "Mehmetdurnaoğlu_0_zv4ht3mqe9r",
+      "type": "partner",
+      "second": "Meyrem_1_jdgscshtip"
+    },
+    {
+      "id": "parent-Mehmetdurnaoğlu_0_zv4ht3mqe9r-Sevgi_1_2zr3k5xill",
+      "main": "Mehmetdurnaoğlu_0_zv4ht3mqe9r",
+      "type": "parent",
+      "second": "Sevgi_1_2zr3k5xill"
+    },
+    {
+      "id": "parent-Meyrem_1_jdgscshtip-Sevgi_1_2zr3k5xill",
+      "main": "Meyrem_1_jdgscshtip",
+      "type": "parent",
+      "second": "Sevgi_1_2zr3k5xill"
+    },
+    {
+      "id": "partner-Sevgi_1_2zr3k5xill-OkMamet_0_xadajw8oyc",
+      "main": "Sevgi_1_2zr3k5xill",
+      "type": "partner",
+      "second": "OkMamet_0_xadajw8oyc"
+    },
+    {
+      "id": "parent-Hirto_0_slsijyuhnj-Naima_1_bt7j386l9mw",
+      "main": "Hirto_0_slsijyuhnj",
+      "type": "parent",
+      "second": "Naima_1_bt7j386l9mw"
     }
   ]
 }
