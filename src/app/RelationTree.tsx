@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 import Tree from '../components/Tree';
 import builder, { getPersonTreeByDepth } from '../helper/builder';
-import { PersonTreeType, PersonType } from '../types';
+import { PersonTreeType, PersonType, StoreType } from '../types';
 import { AppContext } from './ctx';
 import _ from 'lodash';
 import style from './RelationDetail/RelationDetail.module.scss';
@@ -26,7 +26,7 @@ type PersonRelationProps = {
 };
 
 const PersonRelation: React.FC<PersonRelationProps> = ({ person, onClick }) => {
-  const { store, person: personList, relation } = useContext(AppContext);
+  const { store, isDTree, treeDepth } = useContext(AppContext);
 
   const buildedPerson = useMemo(() => builder(person, store), [person, store]);
   const parent = buildedPerson.parents[0];
@@ -92,7 +92,15 @@ const PersonRelation: React.FC<PersonRelationProps> = ({ person, onClick }) => {
     ]
   );
 
-  return <Tree person={tree} onClick={onClick} />;
+  return (
+    <Tree
+      depth={treeDepth}
+      person={tree}
+      onClick={onClick}
+      store={store}
+      isDTree={isDTree}
+    />
+  );
 };
 
 type RelationTreeProps = {

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { PersonTreeType, PersonType } from '../../types';
+import { PersonTreeType, PersonType, StoreType } from '../../types';
 import Person from './Person';
 import Portal from '../Portal';
 import TreeSizeCalc from './TreeSizeCalc';
+import DTree from '../DTree';
 
 type PersonTreeProps = {
   person: PersonTreeType;
@@ -66,13 +67,13 @@ const PersonTree: React.FC<PersonTreeProps> = ({
   return <ul>{content}</ul>;
 };
 
-type TreeProps = {
+type TreeMainProps = {
   person: PersonTreeType;
   onClick?: (person: PersonType) => void;
   parentTree?: boolean;
 };
 
-const Tree: React.FC<TreeProps> = ({ person, onClick, parentTree }) => {
+const TreeMain: React.FC<TreeMainProps> = ({ person, onClick, parentTree }) => {
   const [size, setSize] = useState({
     width: 0,
     height: 0,
@@ -101,6 +102,29 @@ const Tree: React.FC<TreeProps> = ({ person, onClick, parentTree }) => {
       </Portal>
     </>
   );
+};
+
+type TreeProps = {
+  person: PersonTreeType;
+  onClick?: (person: PersonType) => void;
+  parentTree?: boolean;
+  isDTree: boolean;
+  store: StoreType;
+  depth: number;
+};
+const Tree: React.FC<TreeProps> = ({
+  person,
+  onClick,
+  parentTree,
+  isDTree,
+  store,
+  depth,
+}) => {
+  if (isDTree) {
+    return <DTree depth={depth} onClick={onClick} person={person} store={store} />;
+  }
+
+  return <TreeMain person={person} onClick={onClick} parentTree={parentTree} />;
 };
 
 export default Tree;

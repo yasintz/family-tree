@@ -21,7 +21,7 @@ type DTreePersonType = SimplePersonType & {
 function personToDtreePerson(person: PersonType): SimplePersonType {
   return {
     name: person.name,
-    class: person.gender === 0 ? 'woman' : 'man',
+    class: person.gender === 1 ? 'woman' : 'man',
     extra: {
       id: person.id,
     },

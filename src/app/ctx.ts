@@ -9,6 +9,7 @@ type ContextType = ReturnType<typeof useData> & {
     person?: PersonType;
   }) => void;
   treeDepth: number;
+  isDTree: boolean;
 };
 
 export const AppContext = React.createContext<ContextType>(
