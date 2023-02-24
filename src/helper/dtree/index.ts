@@ -1,5 +1,6 @@
 import { PersonTreeType, PersonType, StoreType } from '../../types';
 import { getCommonChildren, getPersonTreeByDepth } from '../builder';
+// @ts-ignore
 import dTreeOld from './index.old';
 
 type SimplePersonType = {
