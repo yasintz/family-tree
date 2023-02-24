@@ -20,6 +20,7 @@ import { RawJsonPopup } from './RawJsonPopup';
 import { Routes, Route, Navigate, useNavigate } from 'react-router';
 import { DetailPage } from './pages/detail';
 import CreatePerson from './CreatePerson';
+import DTree from '../components/DTree';
 
 const StyledTreeContainer = styled.div`
   display: flex;
@@ -41,6 +42,7 @@ const StyledActionButton = styled.button<{ $highlight?: boolean }>`
 
 enum PageMode {
   Tree,
+  DTree,
   Detail,
   ParentTree,
   Nothing,
@@ -95,7 +97,7 @@ const App: React.FC = () => {
       });
     }
 
-    if (mode === PageMode.Tree) {
+    if (mode === PageMode.Tree || mode === PageMode.DTree) {
       return getPersonTreeByDepth({
         person,
         depth: treeDepth,
@@ -124,6 +126,11 @@ const App: React.FC = () => {
       text: 'Tree',
       handler: () => setMode(PageMode.Tree),
       highlight: mode === PageMode.Tree,
+    },
+    {
+      text: 'DTree (WIP)',
+      handler: () => setMode(PageMode.DTree),
+      highlight: mode === PageMode.DTree,
     },
     {
       text: 'Detail',
@@ -232,8 +239,10 @@ const App: React.FC = () => {
           <DetailPage {...{ isOldRelation, person, setPerson }} />
         )}
 
-        {(mode === PageMode.Tree || mode === PageMode.ParentTree) &&
-          personTree && (
+        {personTree &&
+          [PageMode.Tree, PageMode.ParentTree, PageMode.DTree].includes(
+            mode
+          ) && (
             <StyledTreeContainer>
               <StyledDepthInputContainer>
                 <label>
@@ -259,11 +268,15 @@ const App: React.FC = () => {
               </StyledDepthInputContainer>
 
               <div className={style.treeContainer}>
-                <Tree
-                  person={personTree}
-                  onClick={setPerson}
-                  parentTree={mode === PageMode.ParentTree}
-                />
+                {mode === PageMode.DTree ? (
+                  <DTree person={personTree} store={store} depth={treeDepth} />
+                ) : (
+                  <Tree
+                    person={personTree}
+                    onClick={setPerson}
+                    parentTree={mode === PageMode.ParentTree}
+                  />
+                )}
               </div>
             </StyledTreeContainer>
           )}

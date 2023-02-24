@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import cx from 'classnames';
 import styled from 'styled-components';
 import { getPersonUrl } from '../../helper';
+import useId from '../../hooks/use-id';
 
 const StyledPerson = styled.a<{ $highlight?: boolean }>`
   text-decoration: none;

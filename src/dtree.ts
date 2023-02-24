@@ -19,41 +19,40 @@ const children = (...m: any[]) =>
         : undefined,
     }));
 
-const j = [
-  {
-    name: 'Niclas',
-    class: 'man',
-    textClass: 'emphasis',
-    marriages: Array(1).fill({
-      spouse: {
-        name: 'Iliana',
-        class: 'woman',
-      },
-      children: children(
-        children(),
-        children(
-          undefined,
-          undefined,
-          children(
-            children(
-              children(),
-              children(undefined, undefined, children()),
-              undefined
-            ),
-            children(
-              children(),
-              children(undefined, undefined, children()),
-              undefined
-            )
-          )
-        ),
-        undefined
-      ),
-    }),
-  },
-];
+const j = {
+  name: 'Niclas',
+  class: 'man',
+  textClass: 'emphasis',
+  marriages: Array(2).fill({
+    spouse: {
+      name: 'Iliana',
+      class: 'woman',
+    },
+    children:
+      children(),
+      // children(),
+      // children(
+      //   undefined,
+      //   undefined,
+      //   children(
+      //     children(
+      //       children(),
+      //       children(undefined, undefined, children()),
+      //       undefined
+      //     ),
+      //     children(
+      //       children(),
+      //       children(undefined, undefined, children()),
+      //       undefined
+      //     )
+      //   )
+      // ),
+      // undefined
+  }),
+};
 
-dTree.init(j, {
+// @ts-ignore
+dTree.init([j, j], {
   target: '#root',
   debug: true,
   hideMarriageNodes: true,
@@ -84,3 +83,5 @@ dTree.init(j, {
     },
   },
 });
+
+export {};

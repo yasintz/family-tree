@@ -23,16 +23,15 @@ const Popup: React.FC<PopupProps> = ({ children, open, onClose }) => {
 
 export function popupHoc<T>(
   Component: React.FC<T>,
-  getProps: (
-    props: T
-  ) => {
+  getProps: (props: T) => {
     open: boolean;
     onClose: () => void;
   }
 ) {
+  const Comp = Component as any;
   return (props: T) => (
     <Popup {...getProps(props)}>
-      <Component {...props} />
+      <Comp {...props} />
     </Popup>
   );
 }

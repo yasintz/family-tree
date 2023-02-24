@@ -1,7 +1,5 @@
 import { PersonTreeType, PersonType, StoreType } from '../types';
 
-const emptyArray: [] = [];
-
 function getPersonTreeByDepth({
   person,
   depth,
@@ -27,7 +25,7 @@ function getPersonTreeByDepth({
               store,
             })
           )
-        : emptyArray,
+        : [],
   };
 }
 
@@ -46,8 +44,8 @@ function getParentTreeByDepth({
 
   return {
     ...person,
-    partners: showSiblings ? buildedPerson.siblings : emptyArray,
-    metadata: emptyArray,
+    partners: showSiblings ? buildedPerson.siblings : [],
+    metadata: [],
     children:
       depth > 0
         ? buildedPerson.parents.map((c) =>
@@ -58,8 +56,21 @@ function getParentTreeByDepth({
               showSiblings,
             })
           )
-        : emptyArray,
+        : [],
   };
+}
+
+export function getCommonChildren(
+  person1: PersonType,
+  person2: PersonType,
+  store: StoreType
+) {
+  const person1Build = builder(person1, store);
+  const person2Build = builder(person2, store);
+
+  return person1Build.children.filter((child) =>
+    person2Build.children.some((c2) => c2.id === child.id)
+  );
 }
 
 function builder(
