@@ -15,6 +15,7 @@ type ContextType = ReturnType<typeof useData> & {
     person?: PersonType;
   }) => void;
   treeDepth: number;
+  setTreeDepth: React.Dispatch<React.SetStateAction<number>>;
   isDTree: boolean;
   treeView: TreeView;
   setTreeView: (view: TreeView) => void;

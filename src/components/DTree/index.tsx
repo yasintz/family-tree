@@ -1,7 +1,11 @@
+import ReactDOM from 'react-dom/server';
+import cx from 'classnames';
 import React, { useEffect, useRef } from 'react';
 import dTree, { personTreeToDTree } from '../../helper/dtree';
 import { generateId } from '../../helper/generate-id';
 import { PersonTreeType, PersonType, StoreType } from '../../types';
+import './style.scss';
+import _ from 'lodash';
 
 type DTreeProps = {
   person: PersonTreeType;
@@ -10,6 +14,7 @@ type DTreeProps = {
   onClick?: (person: PersonType) => void;
 };
 
+const genderClass = ['male', 'female'];
 const DTree = ({ person, store, depth, onClick }: DTreeProps) => {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -26,18 +31,34 @@ const DTree = ({ person, store, depth, onClick }: DTreeProps) => {
     child.id = generateId(5, 'a');
 
     ref.current.appendChild(child);
+    const dtreePerson = personTreeToDTree(person, store, depth);
 
-    dTree.init([personTreeToDTree(person, store, depth)], {
+    dTree.init([dtreePerson], {
       target: `#${child.id}`,
       callbacks: {
-        // @ts-ignore
         nodeClick: (name, extra) => {
-          const id = extra.id;
-          const clickedPerson = store.person.find((i) => i.id === id);
-          if (clickedPerson) {
-            onClick?.(clickedPerson);
-          }
+          onClick?.(extra.person);
         },
+        // nodeRenderer(
+        //   name,
+        //   x,
+        //   y,
+        //   height,
+        //   width,
+        //   extra,
+        //   id,
+        //   nodeClass,
+        //   textClass,
+        //   textRenderer
+        // ) {
+        //   const element = (
+        //     <div className={cx('person', genderClass[extra.person.gender])}>
+        //       <div>{name}</div>
+        //     </div>
+        //   );
+
+        //   return ReactDOM.renderToString(element);
+        // },
       },
     });
   }, [person, person.name, store, depth, onClick]);

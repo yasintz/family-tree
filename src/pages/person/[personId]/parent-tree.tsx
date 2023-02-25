@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { useAppContext } from '../../../app/ctx';
+import { TreeView, useAppContext } from '../../../app/ctx';
 import Tree from '../../../components/Tree';
 import {
   getParentTreeByDepth,
@@ -20,7 +20,7 @@ const StyledContainer = styled.div`
 
 const PersonParentTreePage = () => {
   const navigate = useNavigate();
-  const { treeDepth, store } = useAppContext();
+  const { treeDepth, store, treeView } = useAppContext();
   const person = usePerson();
 
   const setPerson = (p: PersonType) => navigate(`/person/${p.id}`);
@@ -49,8 +49,7 @@ const PersonParentTreePage = () => {
         parentTree={false}
         store={store}
         depth={treeDepth}
-        //
-        isDTree={false}
+        isDTree={treeView === TreeView.DTree}
       />
     </StyledContainer>
   );

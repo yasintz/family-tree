@@ -203,6 +203,7 @@ const App: React.FC = () => {
         isDTree,
         treeView: TreeView.Default,
         setTreeView: () => 0,
+        setTreeDepth,
       }}
     >
       <div className={style.container}>

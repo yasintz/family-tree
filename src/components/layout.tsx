@@ -20,7 +20,6 @@ const Layout = ({ children }: LayoutProps) => {
 
   const [treeView, setTreeView] = useState<TreeView>(TreeView.Default);
   const [personId, setPersonId] = usePersonIdStateFromUrl();
-  const [isDTree, setIsDTree] = useState(false);
   const [treeDepth, setTreeDepth] = useState<number>(3);
   const [personSelector, setPersonSelector] = useState<{
     cb?: (v: PersonType) => void;
@@ -35,9 +34,10 @@ const Layout = ({ children }: LayoutProps) => {
         showCreatePersonModal: () => navigate('/create-person'),
         showPersonSelector: setPersonSelector,
         treeDepth,
-        isDTree,
+        isDTree: treeView === TreeView.DTree,
         treeView,
         setTreeView,
+        setTreeDepth,
       }}
     >
       <div className={style.container}>

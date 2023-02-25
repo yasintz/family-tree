@@ -4,9 +4,20 @@ import { TreeView, useAppContext } from '../app/ctx';
 type SettingsPageProps = {};
 
 const SettingsPage = (props: SettingsPageProps) => {
-  const { setTreeView, treeView } = useAppContext();
+  const { setTreeView, treeView, treeDepth, setTreeDepth } = useAppContext();
   return (
     <div>
+      <label>
+        Depth:
+        <input
+          type="number"
+          value={treeDepth.toString()}
+          onChange={(e) => setTreeDepth(parseInt(e.target.value))}
+          style={{ maxWidth: '60%' }}
+        />
+      </label>
+      <br />
+      <br />
       <label>
         Tree View{' '}
         <select
