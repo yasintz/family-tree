@@ -20,7 +20,7 @@ type Params = {
 
 function usePersonActions(params: Params) {
   const {
-    personState: [, setPerson],
+    personState: [personList, setPerson],
     relationState: [, setRelation],
     metadataState: [, setMetadata],
   } = params;
@@ -29,7 +29,7 @@ function usePersonActions(params: Params) {
     const newPerson = {
       name,
       gender,
-      id: `${turkishToEnglish(name.split(' ').join(''))}_${gender}_${uid()}`,
+      id: personList.length.toString(),
     };
 
     setPerson((prev) => [newPerson, ...prev]);
@@ -77,7 +77,7 @@ function usePersonActions(params: Params) {
 
 function useRelationActions(params: Params) {
   const {
-    relationState: [, setRelation],
+    relationState: [relations, setRelation],
     personState: [personList, setPerson],
     metadataState: [, setMetadata],
   } = params;
@@ -109,7 +109,7 @@ function useRelationActions(params: Params) {
     };
 
     const newRelation = mapp[type];
-    newRelation.id = `${newRelation.type}-${newRelation.main}-${newRelation.second}`;
+    newRelation.id = relations.length.toString();
     return newRelation;
   };
 

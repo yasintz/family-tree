@@ -47,7 +47,7 @@ const CreatePerson: React.FC<CreatePersonProps> = ({
       </div>
       <br />
       <button disabled={!name} onClick={() => onSubmit(name, gender)}>
-        Create
+        {initialName ? 'Update' : 'Create'}
       </button>
     </div>
   );

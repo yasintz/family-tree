@@ -42,7 +42,7 @@ const DTree = ({ person, store, depth, onClick }: DTreeProps) => {
     });
   }, [person, person.name, store, depth, onClick]);
 
-  return <div ref={ref} />;
+  return <div ref={ref} className="dtree-container" />;
 };
 
 export default DTree;

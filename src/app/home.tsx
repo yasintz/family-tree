@@ -6,7 +6,7 @@ import { PersonType } from '../types';
 import AddRelation from './AddRelation/index';
 import RelationFinder from './RelationDetail';
 import style from './app.module.scss';
-import { AppContext } from './ctx';
+import { AppContext, TreeView } from './ctx';
 import useData from './data';
 import builder, {
   getPersonTreeByDepth,
@@ -125,36 +125,44 @@ const App: React.FC = () => {
       text: 'Tree',
       handler: () => setMode(PageMode.Tree),
       highlight: mode === PageMode.Tree,
+      hide: true,
     },
     {
       text: `DTree: ${isDTree ? 'on' : 'off'}`,
       handler: () => setIsDTree((prev) => !prev),
+      hide: true,
     },
     {
       text: 'Detail',
       to: `detail`,
       highlight: mode === PageMode.Detail,
+      hide: true,
     },
     {
       text: 'Parent Tree',
       handler: () => setMode(PageMode.ParentTree),
       highlight: mode === PageMode.ParentTree,
+      hide: true,
     },
     {
       text: 'Relation',
       to: 'add-relation',
+      hide: true,
     },
     {
       text: 'Edit',
       to: 'edit',
+      hide: true,
     },
     {
       text: 'Metadata',
       to: 'metadata',
+      hide: true,
     },
     {
       text: `Old Relation Mode: ${isOldRelation ? 'on' : 'off'}`,
       handler: () => setIsOldRelation((prev) => !prev),
+      hide: true,
     },
     {
       text: `Parentless: ${showParentlessNodes ? 'on' : 'off'}`,
@@ -163,23 +171,27 @@ const App: React.FC = () => {
     {
       text: `Delete`,
       handler: () => person && deletePerson(person.id),
+      hide: true,
     },
     {
       text: 'Raw Json',
       to: 'raw-json',
+      hide: true,
     },
-  ].map((i) => ({
-    ...i,
-    handler: () => {
-      if (i.to) {
-        navigate(`/${person?.id}/${i.to}?user=${person?.id}`);
-        setMode(PageMode.Nothing);
-      } else if (i.text === 'Parent Tree' || i.text === 'Tree') {
-        navigate(`/?user=${person?.id}`);
-      }
-      i.handler?.();
-    },
-  }));
+  ]
+    .map((i) => ({
+      ...i,
+      handler: () => {
+        if (i.to) {
+          navigate(`/${person?.id}/${i.to}?user=${person?.id}`);
+          setMode(PageMode.Nothing);
+        } else if (i.text === 'Parent Tree' || i.text === 'Tree') {
+          navigate(`/?user=${person?.id}`);
+        }
+        i.handler?.();
+      },
+    }))
+    .filter((i) => !i.hide);
 
   return (
     <AppContext.Provider
@@ -189,6 +201,8 @@ const App: React.FC = () => {
         showPersonSelector: setPersonSelector,
         treeDepth,
         isDTree,
+        treeView: TreeView.Default,
+        setTreeView: () => 0,
       }}
     >
       <div className={style.container}>

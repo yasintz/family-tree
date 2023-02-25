@@ -1,7 +1,7 @@
 import TreeBuilder from './builder.js';
 import _ from 'lodash';
 import d3 from './d3';
-import './style.css';
+import './style.scss';
 
 const dTree = {
   VERSION: '/* @echo DTREE_VERSION */',

@@ -7,12 +7,14 @@ type SidebarProps = {
   person: PersonType[];
   onClick: (person: PersonType) => void;
   onCreatePersonClick: () => void;
+  onSettingsClick?: () => void;
 };
 
 const Sidebar: React.FC<SidebarProps> = ({
   person,
   onClick,
   onCreatePersonClick,
+  onSettingsClick,
 }) => {
   const [search, setSearch] = useState('');
   const persons = useMemo(() => {
@@ -24,6 +26,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
     return allPersons;
   }, [person, search]);
+
   return (
     <div className={style.container}>
       <span style={{ fontSize: 12, marginTop: 16 }}>
@@ -31,6 +34,9 @@ const Sidebar: React.FC<SidebarProps> = ({
       </span>
       <div className={style.createPerson} onClick={onCreatePersonClick}>
         Create Person
+      </div>
+      <div className={style.createPerson} onClick={onSettingsClick}>
+        Settings
       </div>
 
       <input
